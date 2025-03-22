@@ -5,23 +5,25 @@ var selected = false
 
 # Called when the node enters the scene tree for the first time.
 func _ready():
-	$Unit.initialize(10,3,2,1)
+	var MAXHP = 10
+	var SPEED = 1
+	var ATTACK = 2
+	var DEFENSE = 1
+	$Unit.initialize(MAXHP,SPEED,ATTACK,DEFENSE)
 
 # Called every frame. 'delta' is the elapsed time since the previous frame.
 func _process(delta):
 	if not(self.has_node("Unit")):
 		queue_free()
 
+func getSpeed():
+	return $Unit.speed
 
-
-func _on_input_event(viewport, event, shape_idx):
-	if event is InputEventMouseButton:
-		if event.pressed and event.button_index == MOUSE_BUTTON_LEFT:
-			selected = not(selected)
-			if selected:
-				$AnimatedSprite2D.animation = "selected"
-				$AnimatedSprite2D.play()
-			else:
-				$AnimatedSprite2D.animation = "base"
-				$AnimatedSprite2D.stop()
-				
+func toggleSelect():
+	selected = not(selected)
+	if selected:
+		$AnimatedSprite2D.animation = "selected"
+		$AnimatedSprite2D.play()
+	else:
+		$AnimatedSprite2D.animation = "base"
+		$AnimatedSprite2D.stop()
