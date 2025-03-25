@@ -2,22 +2,37 @@ extends Node2D
 
 @export var allied_unit: PackedScene
 var player
+var playerTurn = true
 
 # Called when the node enters the scene tree for the first time.
 func _ready():
 	player = allied_unit.instantiate()
 	player.position = $TileMap.map_to_local(Vector2(5,1))
 	add_child(player)
+	
 
 func _input(event):
 	if event is InputEventMouseButton:
 		if event.button_index == MOUSE_BUTTON_LEFT and event.pressed:
-			if player.selected and isValidGroundMovement(centerOnTile(player.position),centerOnTile(event.position),player.getSpeed()):
+			print($TileMap.get_cell_source_id(0,centerOnTile(event.position)))
+			if player.selected and $TileMap.get_cell_source_id(0,$TileMap.local_to_map(event.position)) == 3:
+				#THIS WILL CAUSE A BUG IF ANYTHING HAPPENS TO PLAYER POSITION OR SPEED
+				#IN BETWEEN PLAYER SELECTION AND THE MOVEMENT.
+				isValidGroundMovement(centerOnTile(player.position),player.getSpeed(), false)
 				player.position = centerOnTile(event.position)
-				player.toggleSelect()
-			elif not(player.selected) and $TileMap.local_to_map(event.position) == $TileMap.local_to_map(player.position):
-				player.toggleSelect()
+				player.toggleSelect(false)
 				
+			elif not(player.selected) and $TileMap.local_to_map(event.position) == $TileMap.local_to_map(player.position):
+				player.toggleSelect(true)
+				isValidGroundMovement(centerOnTile(player.position),player.getSpeed(), true)
+				
+
+func flipTile(isNowHighlit,pos):
+	if isNowHighlit:
+		$TileMap.set_cell(0,$TileMap.local_to_map(pos),3,Vector2i(0,0))
+	else:
+		$TileMap.set_cell(0,$TileMap.local_to_map(pos),0,Vector2i(0,0))
+
 
 func centerOnTile(pos):
 	return $TileMap.map_to_local($TileMap.local_to_map(pos))
@@ -25,11 +40,10 @@ func centerOnTile(pos):
 func isPassable(pos):
 	return $TileMap.get_cell_tile_data(0,$TileMap.local_to_map(pos),false).get_custom_data("isPassable")
 
-func isValidGroundMovement(startPos, endPos, speed):
-	if centerOnTile(endPos) == centerOnTile(startPos):
-		return true
-	elif speed == 0:
-		return false
+func isValidGroundMovement(startPos, speed, flip):
+	flipTile(flip,centerOnTile(startPos))
+	if speed == 0:
+		return
 	else:
 		var tileSize = $TileMap.tile_set.tile_size.x
 		var tileDiagonalSize = int(tileSize * sqrt(2)/2)
@@ -39,20 +53,19 @@ func isValidGroundMovement(startPos, endPos, speed):
 		var downHex = centerOnTile(startPos + Vector2(0, tileSize))
 		var downRightHex = centerOnTile(startPos + Vector2(tileDiagonalSize, tileDiagonalSize))
 		var downLeftHex = centerOnTile(startPos + Vector2(-1 * tileDiagonalSize, tileDiagonalSize))
-		var validPathFound = false
-		if not(validPathFound) and isPassable(upHex):
-			validPathFound = validPathFound or isValidGroundMovement(upHex, endPos, speed-1)
-		if not(validPathFound) and isPassable(upRightHex):
-			validPathFound = validPathFound or isValidGroundMovement(upRightHex, endPos, speed-1)
-		if not(validPathFound) and isPassable(upLeftHex):
-			validPathFound = validPathFound or isValidGroundMovement(upLeftHex, endPos, speed-1)
-		if not(validPathFound) and isPassable(downHex):
-			validPathFound = validPathFound or isValidGroundMovement(downHex, endPos, speed-1)
-		if not(validPathFound) and isPassable(downRightHex):
-			validPathFound = validPathFound or isValidGroundMovement(downRightHex, endPos, speed-1)
-		if not(validPathFound) and isPassable(downLeftHex):
-			validPathFound = validPathFound or isValidGroundMovement(downLeftHex, endPos, speed-1)
-		return validPathFound
+		if isPassable(upHex):
+			isValidGroundMovement(upHex, speed-1, flip)
+		if isPassable(upRightHex):
+			isValidGroundMovement(upRightHex, speed-1, flip)
+		if isPassable(upLeftHex):
+			isValidGroundMovement(upLeftHex, speed-1, flip)
+		if isPassable(downHex):
+			isValidGroundMovement(downHex, speed-1, flip)
+		if isPassable(downRightHex):
+			isValidGroundMovement(downRightHex, speed-1, flip)
+		if isPassable(downLeftHex):
+			isValidGroundMovement(downLeftHex, speed-1, flip)
+		return
 		
 
 # Called every frame. 'delta' is the elapsed time since the previous frame.
