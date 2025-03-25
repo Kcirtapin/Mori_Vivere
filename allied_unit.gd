@@ -6,7 +6,7 @@ var selected = false
 # Called when the node enters the scene tree for the first time.
 func _ready():
 	var MAXHP = 10
-	var SPEED = 1
+	var SPEED = 2
 	var ATTACK = 2
 	var DEFENSE = 1
 	$Unit.initialize(MAXHP,SPEED,ATTACK,DEFENSE)

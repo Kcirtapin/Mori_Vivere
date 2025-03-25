@@ -1,8 +1,18 @@
-[gd_scene load_steps=6 format=3 uid="uid://hkxvfkcdc7tf"]
+[gd_scene load_steps=10 format=3 uid="uid://hkxvfkcdc7tf"]
 
 [ext_resource type="Script" path="res://tutorial_level.gd" id="1_4lexe"]
 [ext_resource type="Texture2D" uid="uid://daicu1k8y15io" path="res://art/Placeholder_Tilemap.png" id="1_h5cw8"]
 [ext_resource type="PackedScene" uid="uid://n4mv7ites0eh" path="res://allied_unit.tscn" id="2_0c5fu"]
+[ext_resource type="Texture2D" uid="uid://chqjmq4ky1yxl" path="res://art/Copy of HexTemp.png" id="3_86dit"]
+[ext_resource type="Texture2D" uid="uid://doa0hukt3kbgy" path="res://art/Copy of HexTempOverlay.png" id="5_i6ohi"]
+
+[sub_resource type="TileSetAtlasSource" id="TileSetAtlasSource_3l3iv"]
+texture = ExtResource("3_86dit")
+texture_region_size = Vector2i(64, 64)
+0:0/0 = 0
+0:0/0/physics_layer_0/linear_velocity = Vector2(0, 0)
+0:0/0/physics_layer_0/angular_velocity = 0.0
+0:0/0/custom_data_0 = true
 
 [sub_resource type="TileSetAtlasSource" id="TileSetAtlasSource_5x0re"]
 texture = ExtResource("1_h5cw8")
@@ -25,6 +35,13 @@ texture_region_size = Vector2i(64, 64)
 2:0/0/physics_layer_0/linear_velocity = Vector2(0, 0)
 2:0/0/physics_layer_0/angular_velocity = 0.0
 
+[sub_resource type="TileSetAtlasSource" id="TileSetAtlasSource_fq3id"]
+texture = ExtResource("5_i6ohi")
+texture_region_size = Vector2i(64, 64)
+0:0/0 = 0
+0:0/0/physics_layer_0/linear_velocity = Vector2(0, 0)
+0:0/0/physics_layer_0/angular_velocity = 0.0
+
 [sub_resource type="TileSet" id="TileSet_0t5q3"]
 tile_shape = 3
 tile_offset_axis = 1
@@ -33,6 +50,8 @@ physics_layer_0/collision_layer = 1
 custom_data_layer_0/name = "isPassable"
 custom_data_layer_0/type = 1
 sources/1 = SubResource("TileSetAtlasSource_5x0re")
+sources/0 = SubResource("TileSetAtlasSource_3l3iv")
+sources/3 = SubResource("TileSetAtlasSource_fq3id")
 
 [node name="TutorialLevel" type="Node2D"]
 script = ExtResource("1_4lexe")
@@ -41,4 +60,4 @@ allied_unit = ExtResource("2_0c5fu")
 [node name="TileMap" type="TileMap" parent="."]
 tile_set = SubResource("TileSet_0t5q3")
 format = 2
-layer_0/tile_data = PackedInt32Array(131083, 65537, 0, 196618, 65537, 0, 262154, 65537, 0, 327690, 65537, 0, 262155, 65537, 0, 262156, 65537, 0, 196619, 65537, 0, 196620, 65537, 0, 131084, 65537, 0, 131085, 65537, 0, 65549, 65537, 0, 131086, 65537, 0, 65550, 65537, 0, 131082, 65537, 0, 65545, 65537, 0, 65544, 65537, 0, 131080, 65537, 0, 131081, 65537, 0, 327692, 65537, 0, 327691, 65537, 0, 393226, 65537, 0, 393227, 65537, 0, 393228, 65537, 0, 196616, 65537, 0, 262152, 65537, 0, 327688, 65537, 0, 327689, 131073, 0, 196617, 65537, 0, 262153, 131073, 0, 131087, 65537, 0, 196623, 65537, 0, 262159, 131073, 0, 262158, 65537, 0, 327694, 65537, 0, 327693, 65537, 0, 196622, 131073, 0, 196621, 131073, 0, 262157, 131073, 0, 65551, 131073, 0, 15, 131073, 0, 14, 131073, 0, 13, 131073, 0, 65548, 131073, 0, 65547, 131073, 0, 65546, 131073, 0, 9, 131073, 0, 8, 131073, 0, 7, 131073, 0, 65543, 65537, 0, 131079, 131073, 0, 196615, 131073, 0, 262151, 131073, 0, 327687, 131073, 0, 458762, 131073, 0, 458763, 131073, 0, 393224, 131073, 0, 458764, 131073, 0, 393229, 131073, 0, 393230, 131073, 0, 327695, 131073, 0, 262160, 131073, 0, 196624, 131073, 0, 131088, 131073, 0, 393225, 131073, 0, 65542, 65537, 0, 131078, 131073, 0, 65541, 65537, 0, 131077, 131073, 0, 131076, 131073, 0, 65540, 131073, 0, 5, 131073, 0, 6, 131073, 0)
+layer_0/tile_data = PackedInt32Array(131083, 0, 0, 196618, 0, 0, 262154, 0, 0, 327690, 0, 0, 262155, 0, 0, 262156, 0, 0, 196619, 0, 0, 196620, 0, 0, 131084, 0, 0, 131085, 0, 0, 65549, 0, 0, 131086, 0, 0, 65550, 0, 0, 131082, 0, 0, 65545, 0, 0, 65544, 0, 0, 131080, 0, 0, 131081, 0, 0, 327692, 0, 0, 327691, 0, 0, 393226, 0, 0, 393227, 0, 0, 393228, 0, 0, 196616, 0, 0, 262152, 0, 0, 327688, 0, 0, 327689, 131073, 0, 196617, 0, 0, 262153, 131073, 0, 131087, 0, 0, 196623, 0, 0, 262159, 131073, 0, 262158, 0, 0, 327694, 0, 0, 327693, 0, 0, 196622, 131073, 0, 196621, 131073, 0, 262157, 131073, 0, 65551, 131073, 0, 15, 131073, 0, 14, 131073, 0, 13, 131073, 0, 65548, 131073, 0, 65547, 131073, 0, 65546, 131073, 0, 9, 131073, 0, 8, 131073, 0, 7, 131073, 0, 65543, 0, 0, 131079, 131073, 0, 196615, 131073, 0, 262151, 131073, 0, 327687, 131073, 0, 458762, 131073, 0, 458763, 131073, 0, 393224, 131073, 0, 458764, 131073, 0, 393229, 131073, 0, 393230, 131073, 0, 327695, 131073, 0, 262160, 131073, 0, 196624, 131073, 0, 131088, 131073, 0, 393225, 131073, 0, 65542, 0, 0, 131078, 131073, 0, 65541, 0, 0, 131077, 131073, 0, 131076, 131073, 0, 65540, 131073, 0, 5, 131073, 0, 6, 131073, 0)
