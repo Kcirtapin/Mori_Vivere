@@ -1,7 +1,10 @@
-[gd_scene load_steps=2 format=3 uid="uid://bkys6iclog7eg"]
+[gd_scene load_steps=3 format=3 uid="uid://bkys6iclog7eg"]
 
+[ext_resource type="Script" path="res://main.gd" id="1_akkss"]
 [ext_resource type="PackedScene" uid="uid://hkxvfkcdc7tf" path="res://tutorial_level.tscn" id="1_jd4wv"]
 
 [node name="Main" type="Node2D"]
+process_mode = 3
+script = ExtResource("1_akkss")
 
 [node name="TutorialLevel" parent="." instance=ExtResource("1_jd4wv")]

@@ -6,7 +6,7 @@ var selected = false
 # Called when the node enters the scene tree for the first time.
 func _ready():
 	var MAXHP = 10
-	var SPEED = 2
+	var SPEED = 3
 	var ATTACK = 2
 	var DEFENSE = 1
 	$Unit.initialize(MAXHP,SPEED,ATTACK,DEFENSE)
@@ -19,8 +19,8 @@ func _process(delta):
 func getSpeed():
 	return $Unit.speed
 
-func toggleSelect():
-	selected = not(selected)
+func toggleSelect(sel):
+	selected = sel
 	if selected:
 		$AnimatedSprite2D.animation = "selected"
 		$AnimatedSprite2D.play()
