@@ -9,55 +9,72 @@ var exitMenu
 var player
 var playerTurn = true
 var enemies = []
+var allies = []
 
 # Called when the node enters the scene tree for the first time.
 func _ready():
 	player = allied_unit.instantiate()
 	player.position = $TileMap.map_to_local(Vector2(5,1))
 	add_child(player)
+	allies.append(player)
 	$EnemyTurnLabel.hide()
 	
 
 func _input(event):
 	if event is InputEventMouseButton and playerTurn and not(menuEnabled):
 		if event.button_index == MOUSE_BUTTON_LEFT and event.pressed:
+			#Moves the unit to the clicked location
 			if player.selected and $TileMap.get_cell_source_id(0,$TileMap.local_to_map(event.position)) == 3:
 				#THIS WILL CAUSE A BUG IF ANYTHING HAPPENS TO PLAYER POSITION OR SPEED
 				#IN BETWEEN PLAYER SELECTION AND THE MOVEMENT.
-				isValidGroundMovement(centerOnTile(player.position),player.getSpeed(), false)
+				var validMovementTiles = []
+				validGroundMovements(centerOnTile(player.position),player.getSpeed(), validMovementTiles)
+				flipTile(false,validMovementTiles)
 				player.position = centerOnTile(event.position)
 				player.toggleSelect(false)
 				
+			#Selects the unit and highlights options
 			elif not(player.selected) and $TileMap.local_to_map(event.position) == $TileMap.local_to_map(player.position):
 				player.toggleSelect(true)
-				isValidGroundMovement(centerOnTile(player.position),player.getSpeed(), true)
-	
+				var validMovementTiles = []
+				validGroundMovements(centerOnTile(player.position),player.getSpeed(), validMovementTiles)
+				flipTile(true,validMovementTiles)
+	#Opens pause menu
 	if event.is_action_pressed("pauseMenu") and not(menuEnabled):
 		exitMenu = Menu.instantiate()
 		add_child(exitMenu)
 		exitMenu.position = Vector2(get_viewport_rect().size/2)
 		menuEnabled = true
 		get_tree().paused = true
+	#Closes pause menu
 	elif event.is_action_pressed("pauseMenu") and menuEnabled:
 		menuEnabled = false
 		get_tree().paused = false
 		exitMenu.queue_free()
 
-func flipTile(isNowHighlit,pos):
-	if isNowHighlit:
-		$TileMap.set_cell(0,$TileMap.local_to_map(pos),3,Vector2i(0,0))
-	else:
-		$TileMap.set_cell(0,$TileMap.local_to_map(pos),0,Vector2i(0,0))
+#Flips tiles to their highlit state
+func flipTile(highlit:bool,posList:Array):
+	for pos in posList:
+		if highlit:
+			$TileMap.set_cell(0,$TileMap.local_to_map(pos),3,Vector2i(0,0))
+		else:
+			$TileMap.set_cell(0,$TileMap.local_to_map(pos),0,Vector2i(0,0))
 
-
-func centerOnTile(pos):
+#Takes a local vector2 of position, and returns the local vector2 position centered on the nearest tile
+func centerOnTile(pos:Vector2):
 	return $TileMap.map_to_local($TileMap.local_to_map(pos))
 	
-func isPassable(pos):
+func isPassable(pos:Vector2):
+	for a in allies:
+		if pos == a.position:
+			return false
+	for e in enemies:
+		if pos == e.position:
+			return false
 	return $TileMap.get_cell_tile_data(0,$TileMap.local_to_map(pos),false).get_custom_data("isPassable")
 
-func isValidGroundMovement(startPos, speed, flip):
-	flipTile(flip,centerOnTile(startPos))
+func validGroundMovements(startPos:Vector2, speed:int, tileList:Array):
+	tileList.append(startPos)
 	if speed == 0:
 		return
 	else:
@@ -70,17 +87,17 @@ func isValidGroundMovement(startPos, speed, flip):
 		var downRightHex = centerOnTile(startPos + Vector2(tileDiagonalSize, tileDiagonalSize))
 		var downLeftHex = centerOnTile(startPos + Vector2(-1 * tileDiagonalSize, tileDiagonalSize))
 		if isPassable(upHex):
-			isValidGroundMovement(upHex, speed-1, flip)
+			validGroundMovements(upHex, speed-1, tileList)
 		if isPassable(upRightHex):
-			isValidGroundMovement(upRightHex, speed-1, flip)
+			validGroundMovements(upRightHex, speed-1, tileList)
 		if isPassable(upLeftHex):
-			isValidGroundMovement(upLeftHex, speed-1, flip)
+			validGroundMovements(upLeftHex, speed-1, tileList)
 		if isPassable(downHex):
-			isValidGroundMovement(downHex, speed-1, flip)
+			validGroundMovements(downHex, speed-1, tileList)
 		if isPassable(downRightHex):
-			isValidGroundMovement(downRightHex, speed-1, flip)
+			validGroundMovements(downRightHex, speed-1, tileList)
 		if isPassable(downLeftHex):
-			isValidGroundMovement(downLeftHex, speed-1, flip)
+			validGroundMovements(downLeftHex, speed-1, tileList)
 		return
 		
 
@@ -98,6 +115,10 @@ func _process(delta):
 func _on_enemy_turn_label_timer_timeout():
 	playerTurn = true
 	for enemy in enemies:
-		enemy.takeTurn()
+		doEnemyTurn(enemy)
 	$EnemyTurnLabel.hide()
 	$EnemyTurnLabelTimer.stop()
+
+func doEnemyTurn(enemy):
+	if enemy.getAiType() == "basic":
+		return true

@@ -1,5 +1,6 @@
 extends Area2D
 
+var AI_TYPE = "basic"
 
 # Called when the node enters the scene tree for the first time.
 func _ready():
@@ -9,8 +10,8 @@ func _ready():
 	var DEFENSE = 1
 	$Unit.initialize(MAXHP,SPEED,ATTACK,DEFENSE)
 
-func takeTurn():
-	pass
+func getAiType():
+	return AI_TYPE
 
 # Called every frame. 'delta' is the elapsed time since the previous frame.
 func _process(delta):
