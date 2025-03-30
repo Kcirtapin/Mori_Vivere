@@ -10,9 +10,14 @@ func _ready():
 	var DEFENSE = 1
 	$Unit.initialize(MAXHP,SPEED,ATTACK,DEFENSE)
 
+func takeHit(dmg:int, isBlockable:bool):
+	$Unit.takeHit(dmg,isBlockable)
+
 func getAiType():
 	return AI_TYPE
 
 # Called every frame. 'delta' is the elapsed time since the previous frame.
 func _process(delta):
-	pass
+	if not(self.has_node("Unit")):
+		get_parent().removeEnemy(self)
+		queue_free()

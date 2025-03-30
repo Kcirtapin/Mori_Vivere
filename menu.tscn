@@ -29,24 +29,11 @@ offset_bottom = 10.0
 text = "Return"
 metadata/_edit_use_anchors_ = true
 
-[node name="EndTurn" type="Button" parent="."]
-anchors_preset = -1
-anchor_left = 0.5
-anchor_top = 0.514
-anchor_right = 0.5
-anchor_bottom = 0.514
+[node name="Quit" type="Button" parent="."]
 offset_left = -50.0
 offset_top = 15.0
 offset_right = 50.0
 offset_bottom = 50.0
-text = "End Turn"
-metadata/_edit_use_anchors_ = true
-
-[node name="Quit" type="Button" parent="."]
-offset_left = -50.0
-offset_top = 55.0
-offset_right = 50.0
-offset_bottom = 90.0
 text = "Quit"
 metadata/_edit_use_anchors_ = true
 
@@ -77,7 +64,6 @@ text = "No"
 metadata/_edit_use_anchors_ = true
 
 [connection signal="pressed" from="Return" to="." method="_on_return_pressed"]
-[connection signal="pressed" from="EndTurn" to="." method="_on_end_turn_pressed"]
 [connection signal="pressed" from="Quit" to="." method="_on_quit_pressed"]
 [connection signal="pressed" from="YesButton" to="." method="_on_yes_button_pressed"]
 [connection signal="pressed" from="NoButton" to="." method="_on_no_button_pressed"]

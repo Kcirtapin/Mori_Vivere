@@ -5,7 +5,7 @@
 [ext_resource type="PackedScene" uid="uid://cc17p0bj20v1f" path="res://UnitAbstract.tscn" id="2_nasib"]
 
 [sub_resource type="CircleShape2D" id="CircleShape2D_6se4p"]
-radius = 15.5563
+radius = 17.0294
 
 [sub_resource type="SpriteFrames" id="SpriteFrames_vb3ls"]
 animations = [{
@@ -14,7 +14,7 @@ animations = [{
 "texture": ExtResource("1_ysro8")
 }],
 "loop": true,
-"name": &"default",
+"name": &"base",
 "speed": 5.0
 }]
 
@@ -26,5 +26,7 @@ shape = SubResource("CircleShape2D_6se4p")
 
 [node name="AnimatedSprite2D" type="AnimatedSprite2D" parent="."]
 sprite_frames = SubResource("SpriteFrames_vb3ls")
+animation = &"base"
+frame_progress = 0.888452
 
 [node name="Unit" parent="." instance=ExtResource("2_nasib")]

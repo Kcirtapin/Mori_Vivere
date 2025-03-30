@@ -16,7 +16,6 @@ func _on_yes_button_pressed():
 func _on_no_button_pressed():
 	$MenuHeader.show()
 	$Return.show()
-	$EndTurn.show()
 	$Quit.show()
 	$QuitConfirm.hide()
 	$YesButton.hide()
@@ -30,14 +29,7 @@ func _on_return_pressed():
 func _on_quit_pressed():
 	$MenuHeader.hide()
 	$Return.hide()
-	$EndTurn.hide()
 	$Quit.hide()
 	$QuitConfirm.show()
 	$YesButton.show()
 	$NoButton.show()
-
-
-func _on_end_turn_pressed():
-	get_parent().playerTurn = false
-	queue_free()
-	

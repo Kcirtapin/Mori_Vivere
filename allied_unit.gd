@@ -2,12 +2,13 @@ extends Area2D
 class_name allied_unit
 
 var selected = false
+var isReady = true
 
 # Called when the node enters the scene tree for the first time.
 func _ready():
 	var MAXHP = 10
 	var SPEED = 3
-	var ATTACK = 2
+	var ATTACK = 6
 	var DEFENSE = 1
 	$Unit.initialize(MAXHP,SPEED,ATTACK,DEFENSE)
 
@@ -19,7 +20,15 @@ func _process(delta):
 func getSpeed():
 	return $Unit.speed
 
-func toggleSelect(sel):
+func getAttack():
+	return $Unit.attack
+
+
+
+func takeHit(dmg:int, isBlockable:bool):
+	$Unit.takeHit(dmg,isBlockable)
+
+func toggleSelect(sel:bool):
 	selected = sel
 	if selected:
 		$AnimatedSprite2D.animation = "selected"
@@ -27,3 +36,6 @@ func toggleSelect(sel):
 	else:
 		$AnimatedSprite2D.animation = "base"
 		$AnimatedSprite2D.stop()
+
+func toggleReady(ready):
+	isReady = ready
