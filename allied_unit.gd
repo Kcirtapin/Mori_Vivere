@@ -16,14 +16,15 @@ func _ready():
 func _process(delta):
 	if not(self.has_node("Unit")):
 		queue_free()
+	if not(self.has_node("Unit")):
+		get_parent().removeAlly(self)
+		queue_free()
 
 func getSpeed():
 	return $Unit.speed
 
 func getAttack():
 	return $Unit.attack
-
-
 
 func takeHit(dmg:int, isBlockable:bool):
 	$Unit.takeHit(dmg,isBlockable)

@@ -6,12 +6,18 @@ var AI_TYPE = "basic"
 func _ready():
 	var MAXHP = 10
 	var SPEED = 3
-	var ATTACK = 2
+	var ATTACK = 6
 	var DEFENSE = 1
 	$Unit.initialize(MAXHP,SPEED,ATTACK,DEFENSE)
 
 func takeHit(dmg:int, isBlockable:bool):
 	$Unit.takeHit(dmg,isBlockable)
+
+func getSpeed():
+	return $Unit.speed
+
+func getAttack():
+	return $Unit.attack
 
 func getAiType():
 	return AI_TYPE

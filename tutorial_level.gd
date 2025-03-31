@@ -41,7 +41,7 @@ func _input(event):
 					validGroundMovements(centerOnTile(unit.position),unit.getSpeed(),true,"allied", validMovementTiles)
 					flipTile(0,validMovementTiles)
 					unit.position = centerOnTile(event.position)
-					var adjEnemiesList = getAdjacentEnemies(unit,"good")
+					var adjEnemiesList = getAdjacentEnemies(unit,"allied",false)
 					if len(adjEnemiesList) > 0:
 						flipTile(2,adjEnemiesList)
 					else:
@@ -49,7 +49,7 @@ func _input(event):
 						unit.toggleSelect(false)
 				
 				elif unit.selected and $TileMap.get_cell_source_id(0,$TileMap.local_to_map(event.position)) == 2:
-					var adjEnemiesList = getAdjacentEnemies(unit,"good")
+					var adjEnemiesList = getAdjacentEnemies(unit,"allied",false)
 					flipTile(0,adjEnemiesList)
 					for e in enemies:
 						if e.position == centerOnTile(event.position):
@@ -83,13 +83,26 @@ func getClickedUnit(pos):
 			return a
 	return null
 
-func getAdjacentEnemies(unit, alignment:String):
+func getAdjacentEnemies(unit, alignment:String, getUnits:bool):
 	var adjList = getAdjacentTiles(centerOnTile(unit.position))
 	var adjEnemyList = []
-	if alignment == "good":
+	
+	if alignment == "allied":
 		for e in enemies:
 			if e.position in adjList:
-				adjEnemyList.append(e.position)
+				if getUnits:
+					adjEnemyList.append(e)
+				else:
+					adjEnemyList.append(e.position)
+				
+	if alignment == "enemy":
+		for a in allies:
+			if a.position in adjList:
+				if getUnits:
+					adjEnemyList.append(a)
+				else:
+					adjEnemyList.append(a.position)
+				
 	return adjEnemyList
 
 #Flips tiles to their highlit state
@@ -165,15 +178,55 @@ func _on_enemy_turn_label_timer_timeout():
 
 func doEnemyTurn(enemy):
 	if enemy.getAiType() == "basic":
-		var target = null
+		var target = allies[0]
+		var targetList = getPathToGood(enemy.position,allies[0].position)
 		for a in allies:
-			if target == null or (a.position - enemy.position).length_squared() < (target.position - enemy.position).length_squared():
+			var potentialRouteList = getPathToGood(enemy.position,a.position)
+			if len(potentialRouteList) < len(targetList):
 				target = a
+				targetList = potentialRouteList
+		var speed = enemy.getSpeed()
+		while speed > 0 and len(targetList) > 0:
+			enemy.position = targetList.pop_front()
+			speed-=1
+		var adjAllies = getAdjacentEnemies(enemy,"enemy",true)
+		if len(adjAllies) > 0:
+			adjAllies[0].takeHit(enemy.getAttack(),true)
+
+
+func getPathToGood(startPos, endPos):
+	var routeList = []
+	var MAX_MOVES = 10
+	var routeNotFound = true
+	var crntRoute = [startPos]
+	#The 0 in the usedTiles dictionary is a dummy value. usedTiles is essentially a set
+	var usedTiles = {startPos:0}
+	routeList.append(crntRoute)
+	while routeNotFound and len(routeList) > 0:
+		crntRoute = routeList.pop_front()
+		#print(crntRoute)
+		if crntRoute[len(crntRoute)-1] == endPos:
+			crntRoute.pop_back()
+			return crntRoute
+		elif len(crntRoute) <= MAX_MOVES:
+			var adjTiles = getAdjacentTiles(crntRoute[len(crntRoute)-1])
+			for tile in adjTiles:
+				if tile not in usedTiles.keys():
+					usedTiles[tile] = 0
+					var newList = crntRoute.duplicate()
+					newList.push_back(tile)
+					routeList.push_back(newList)
+	return []
 
 func removeEnemy(enemy):
 	for i in range(len(enemies)):
 		if enemies[i] == enemy:
 			enemies.remove_at(i)
+
+func removeAlly(ally):
+	for i in range(len(allies)):
+		if allies[i] == ally:
+			allies.remove_at(i)
 
 func _on_end_turn_button_pressed():
 	playerTurn = false
