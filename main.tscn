@@ -1,10 +1,41 @@
-[gd_scene load_steps=3 format=3 uid="uid://bkys6iclog7eg"]
+[gd_scene load_steps=4 format=3 uid="uid://bkys6iclog7eg"]
 
 [ext_resource type="Script" path="res://main.gd" id="1_akkss"]
 [ext_resource type="PackedScene" uid="uid://hkxvfkcdc7tf" path="res://tutorial_level.tscn" id="1_jd4wv"]
+[ext_resource type="LabelSettings" uid="uid://cqci1hpob16xk" path="res://menu.tres" id="3_t8e2g"]
 
 [node name="Main" type="Node2D"]
 process_mode = 3
 script = ExtResource("1_akkss")
+level = ExtResource("1_jd4wv")
 
-[node name="TutorialLevel" parent="." instance=ExtResource("1_jd4wv")]
+[node name="TitleScreen" type="Control" parent="."]
+layout_mode = 3
+anchors_preset = 0
+offset_right = 40.0
+offset_bottom = 40.0
+
+[node name="Title" type="Label" parent="TitleScreen"]
+layout_mode = 1
+anchors_preset = 8
+anchor_left = 0.5
+anchor_top = 0.5
+anchor_right = 0.5
+anchor_bottom = 0.5
+offset_left = 465.0
+offset_top = 230.0
+offset_right = 648.0
+offset_bottom = 279.0
+grow_horizontal = 2
+grow_vertical = 2
+text = "Mori Vivere"
+label_settings = ExtResource("3_t8e2g")
+
+[node name="StartButton" type="Button" parent="TitleScreen"]
+offset_left = 550.0
+offset_top = 300.0
+offset_right = 596.0
+offset_bottom = 331.0
+text = "Start"
+
+[connection signal="pressed" from="TitleScreen/StartButton" to="." method="_on_start_button_pressed"]

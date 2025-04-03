@@ -37,8 +37,7 @@ func _input(event):
 				if unit.selected and $TileMap.get_cell_source_id(0,$TileMap.local_to_map(event.position)) == 3:
 					#THIS WILL CAUSE A BUG IF ANYTHING HAPPENS TO PLAYER POSITION OR SPEED
 					#IN BETWEEN PLAYER SELECTION AND THE MOVEMENT.
-					var validMovementTiles = []
-					validGroundMovements(centerOnTile(unit.position),unit.getSpeed(),true,"allied", validMovementTiles)
+					var validMovementTiles = validGroundMovements(centerOnTile(unit.position),unit.getSpeed(),"allied")
 					flipTile(0,validMovementTiles)
 					unit.position = centerOnTile(event.position)
 					var adjEnemiesList = getAdjacentEnemies(unit,"allied",false)
@@ -59,9 +58,9 @@ func _input(event):
 				#Selects the unit and highlights options
 				elif not(unit.selected) and $TileMap.local_to_map(event.position) == $TileMap.local_to_map(unit.position) and unit.isReady:
 					unit.toggleSelect(true)
-					var validMovementTiles = []
-					validGroundMovements(centerOnTile(unit.position),unit.getSpeed(),true,"allied", validMovementTiles)
+					var validMovementTiles = validGroundMovements(centerOnTile(unit.position),unit.getSpeed(),"allied")
 					flipTile(3,validMovementTiles)
+					flipTile(0,[unit.position])
 
 	#Opens pause menu
 	if event.is_action_pressed("pauseMenu") and not(menuEnabled):
@@ -128,18 +127,25 @@ func isPassable(pos:Vector2, alignment:String):
 				return false
 	return $TileMap.get_cell_tile_data(0,$TileMap.local_to_map(pos),false).get_custom_data("isPassable")
 
-func validGroundMovements(startPos:Vector2, speed:int, validTarget:bool, alignment:String, tileList:Array):
+func validGroundMovements(startPos:Vector2, speed:int, alignment:String):
+	var returnList = []
+	validGroundMovementsRec(startPos,speed,true,alignment,returnList)
+	return returnList
+
+
+func validGroundMovementsRec(startPos:Vector2, speed:int, validTarget:bool, alignment:String, tileList:Array):
 	if validTarget:
 		tileList.append(startPos)
 	if speed == 0:
-		return
+		return tileList
 	else:
 		var adjTileList = getAdjacentTiles(startPos)
 		for tile in adjTileList:
 			if isPassable(tile,"none"):
-				validGroundMovements(tile, speed-1, true, alignment, tileList)
+				validGroundMovementsRec(tile, speed-1, true, alignment, tileList)
 			elif isPassable(tile,alignment):
-				validGroundMovements(tile, speed-1, false, alignment, tileList)
+				validGroundMovementsRec(tile, speed-1, false, alignment, tileList)
+		return tileList
 
 func getAdjacentTiles(pos:Vector2):
 	var tileSize = $TileMap.tile_set.tile_size.x
@@ -229,6 +235,9 @@ func removeAlly(ally):
 			allies.remove_at(i)
 
 func _on_end_turn_button_pressed():
+	if unit != null:
+		flipTile(0, validGroundMovements(unit.position,unit.getSpeed(),"allied"))
+		unit.toggleSelect(false)
 	playerTurn = false
 	$EndTurnButton.disabled = true
 	$EnemyTurnLabel.show()
