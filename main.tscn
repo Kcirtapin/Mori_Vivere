@@ -32,6 +32,7 @@ text = "Mori Vivere"
 label_settings = ExtResource("3_t8e2g")
 
 [node name="StartButton" type="Button" parent="TitleScreen"]
+layout_mode = 0
 offset_left = 550.0
 offset_top = 300.0
 offset_right = 596.0
