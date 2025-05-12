@@ -133,11 +133,12 @@ func validGroundMovementsRec(startPos:Vector2, speed:int, validTarget:bool, alig
 		return tileList
 	else:
 		var adjTileList = getAdjacentTiles(startPos)
+		var crntElevation = $TileMap.get_cell_tile_data(tileLayerIDs.TERRAIN,$TileMap.local_to_map(startPos),false).get_custom_data("elevation")
 		for tile in adjTileList:
 			var cost = $TileMap.get_cell_tile_data(tileLayerIDs.TERRAIN,$TileMap.local_to_map(tile),false).get_custom_data("moveCost")
-			if $AI_Library.isPassable(tile,align.NEUTRAL) and speed - cost >= 0:
+			if $AI_Library.isPassable(tile,align.NEUTRAL, crntElevation) and speed - cost >= 0:
 				validGroundMovementsRec(tile, speed-cost, true, alignment, tileList)
-			elif $AI_Library.isPassable(tile,alignment) and speed - cost >= 0:
+			elif $AI_Library.isPassable(tile,alignment, crntElevation) and speed - cost >= 0:
 				validGroundMovementsRec(tile, speed-cost, false, alignment, tileList)
 		return tileList
 

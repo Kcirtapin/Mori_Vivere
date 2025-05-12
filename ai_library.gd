@@ -17,7 +17,7 @@ func initialize(a, e, t):
 ## Helper functions ##
 #Checks if anything would impede movement on the specified tile. Uses local coordinates, but must already be centered
 #Use align enum for alignment parameter
-func isPassable(pos:Vector2, alignment):
+func isPassable(pos:Vector2, alignment, prevElevation:int):
 	pos = centerOnTile(pos)
 	if alignment != align.ALLY:
 		for a in allies:
@@ -30,7 +30,7 @@ func isPassable(pos:Vector2, alignment):
 	if tileMap.get_cell_tile_data(0,tileMap.local_to_map(pos),false) == null:
 		tileMap.get_cell_tile_data(0,tileMap.local_to_map(pos),false)
 		return false
-	return tileMap.get_cell_tile_data(0,tileMap.local_to_map(pos),false).get_custom_data("isPassable")
+	return tileMap.get_cell_tile_data(0,tileMap.local_to_map(pos),false).get_custom_data("isPassable") and abs(tileMap.get_cell_tile_data(0,tileMap.local_to_map(pos),false).get_custom_data("elevation")-prevElevation) <= 1
 
 func centerOnTile(pos:Vector2):
 	return tileMap.map_to_local(tileMap.local_to_map(pos))
@@ -79,15 +79,16 @@ func getPathToGood(startPos, endPos):
 	routeList.append(crntRoute)
 	while routeNotFound and len(routeList) > 0:
 		crntRoute = routeList.pop_front()
+		var crntElevation = tileMap.get_cell_tile_data(0,tileMap.local_to_map(crntRoute[len(crntRoute)-1]),false).get_custom_data("elevation")
 		#print(crntRoute)
 		if crntRoute[len(crntRoute)-1] == endPos:
-			if not isPassable(crntRoute[len(crntRoute)-1], align.ENEMY):
+			if not isPassable(crntRoute[len(crntRoute)-1], align.ENEMY, crntElevation):
 				crntRoute.pop_back()
 			return crntRoute
 		elif len(crntRoute) <= MAX_MOVES:
 			var adjTiles = getAdjacentTiles(crntRoute[len(crntRoute)-1])
 			for tile in adjTiles:
-				if (tile not in usedTiles.keys() and isPassable(tile,align.ENEMY)) or tile == endPos:
+				if (tile not in usedTiles.keys() and isPassable(tile,align.ENEMY, crntElevation)) or tile == endPos:
 					usedTiles[tile] = 0
 					var newList = crntRoute.duplicate()
 					newList.push_back(tile)
