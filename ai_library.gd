@@ -3,21 +3,35 @@ extends Node2D
 var allies
 var enemies
 var tileMap
-
+enum align {ALLY,ENEMY,NEUTRAL}
 # Called when the node enters the scene tree for the first time.
 func _ready():
 	pass # Replace with function body.
 
-
-# Called every frame. 'delta' is the elapsed time since the previous frame.
-func _process(delta):
-	pass
-	
+#Must be initialized with a list of enemies, allies, and a tilemap. "Ally" and "enemy" are from the player's perspective
 func initialize(a, e, t):
 	allies = a
 	enemies = e
 	tileMap = t
+
 ## Helper functions ##
+#Checks if anything would impede movement on the specified tile. Uses local coordinates, but must already be centered
+#Use align enum for alignment parameter
+func isPassable(pos:Vector2, alignment):
+	pos = centerOnTile(pos)
+	if alignment != align.ALLY:
+		for a in allies:
+			if pos == a.position:
+				return false
+	if alignment != align.ENEMY:
+		for e in enemies:
+			if pos == e.position:
+				return false
+	if tileMap.get_cell_tile_data(0,tileMap.local_to_map(pos),false) == null:
+		tileMap.get_cell_tile_data(0,tileMap.local_to_map(pos),false)
+		return false
+	return tileMap.get_cell_tile_data(0,tileMap.local_to_map(pos),false).get_custom_data("isPassable")
+
 func centerOnTile(pos:Vector2):
 	return tileMap.map_to_local(tileMap.local_to_map(pos))
 
@@ -32,12 +46,12 @@ func getAdjacentTiles(pos:Vector2):
 	var downLeftHex = centerOnTile(pos + Vector2(-1 * tileDiagonalSize, tileDiagonalSize))
 	return [upHex,upRightHex,downRightHex,downHex,downLeftHex,upLeftHex]
 
-func getAdjacentEnemies(unit, alignment:String, getUnits:bool):
+func getAdjacentEnemies(unit, alignment, getUnits:bool):
 	var adjList = getAdjacentTiles(centerOnTile(unit.position))
 	var adjEnemyList = []
 	
 
-	if alignment == "allied":
+	if alignment == align.ALLY:
 		for e in enemies:
 			if e.position in adjList:
 				if getUnits:
@@ -45,7 +59,7 @@ func getAdjacentEnemies(unit, alignment:String, getUnits:bool):
 				else:
 					adjEnemyList.append(e.position)
 				
-	if alignment == "enemy":
+	if alignment == align.ENEMY:
 		for a in allies:
 			if a.position in adjList:
 				if getUnits:
@@ -57,7 +71,7 @@ func getAdjacentEnemies(unit, alignment:String, getUnits:bool):
 
 func getPathToGood(startPos, endPos):
 	var routeList = []
-	var MAX_MOVES = 10
+	var MAX_MOVES = 15
 	var routeNotFound = true
 	var crntRoute = [startPos]
 	#The 0 in the usedTiles dictionary is a dummy value. usedTiles is essentially a set
@@ -67,12 +81,13 @@ func getPathToGood(startPos, endPos):
 		crntRoute = routeList.pop_front()
 		#print(crntRoute)
 		if crntRoute[len(crntRoute)-1] == endPos:
-			crntRoute.pop_back()
+			if not isPassable(crntRoute[len(crntRoute)-1], align.ENEMY):
+				crntRoute.pop_back()
 			return crntRoute
 		elif len(crntRoute) <= MAX_MOVES:
 			var adjTiles = getAdjacentTiles(crntRoute[len(crntRoute)-1])
 			for tile in adjTiles:
-				if tile not in usedTiles.keys():
+				if (tile not in usedTiles.keys() and isPassable(tile,align.ENEMY)) or tile == endPos:
 					usedTiles[tile] = 0
 					var newList = crntRoute.duplicate()
 					newList.push_back(tile)
@@ -85,17 +100,19 @@ func basic_AI(enemy):
 	var targetList = getPathToGood(enemy.position,allies[0].position)
 	for a in allies:
 		var potentialRouteList = getPathToGood(enemy.position,a.position)
-		if len(potentialRouteList) < len(targetList):
+		if (len(potentialRouteList) < len(targetList) and potentialRouteList != []) or targetList == []:
 			target = a
 			targetList = potentialRouteList
 	var speed = enemy.getSpeed()
-	var cost = tileMap.get_cell_tile_data(0,tileMap.local_to_map(targetList[0]),false).get_custom_data("moveCost")
-	while speed >= cost and len(targetList) > 0:
-		print(speed)
-		enemy.position = targetList.pop_front()
-		cost = tileMap.get_cell_tile_data(0,tileMap.local_to_map(enemy.position),false).get_custom_data("moveCost")
-		speed -= cost
-	var adjAllies = getAdjacentEnemies(enemy,"enemy",true)
+	if len(targetList) > 1:
+		targetList.pop_front()
+		var cost = tileMap.get_cell_tile_data(0,tileMap.local_to_map(targetList[0]),false).get_custom_data("moveCost")
+		while speed >= cost and len(targetList) > 0:
+			enemy.position = targetList.pop_front()
+			speed -= cost
+			if len(targetList) > 0:
+				cost = tileMap.get_cell_tile_data(0,tileMap.local_to_map(targetList[0]),false).get_custom_data("moveCost")
+	var adjAllies = getAdjacentEnemies(enemy,align.ENEMY,true)
 	if len(adjAllies) > 0:
 		adjAllies[0].takeHit(enemy.getAttack(),true)
 

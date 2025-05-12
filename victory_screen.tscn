@@ -1,0 +1,23 @@
+[gd_scene load_steps=3 format=3 uid="uid://dv0fve2vq6300"]
+
+[ext_resource type="Script" path="res://victory_screen.gd" id="1_ifph6"]
+[ext_resource type="LabelSettings" uid="uid://cqci1hpob16xk" path="res://menu.tres" id="1_lpehd"]
+
+[node name="Victory_Screen" type="Node2D"]
+process_mode = 3
+script = ExtResource("1_ifph6")
+
+[node name="Label" type="Label" parent="."]
+offset_right = 40.0
+offset_bottom = 23.0
+text = "Victory"
+label_settings = ExtResource("1_lpehd")
+
+[node name="Exit_Button" type="Button" parent="."]
+offset_left = 29.0
+offset_top = 44.0
+offset_right = 75.0
+offset_bottom = 75.0
+text = "Exit"
+
+[connection signal="pressed" from="Exit_Button" to="." method="_on_exit_button_pressed"]

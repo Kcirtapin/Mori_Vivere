@@ -7,66 +7,78 @@ var exitMenu
 
 @export var allied_unit: PackedScene
 @export var enemy_unit: PackedScene
+@export var victory_msg: PackedScene
+
 var unit
 var playerTurn = true
 var enemies = []
 var allies = []
+
+enum align {ALLY,ENEMY,NEUTRAL}
+enum tileSourceIDs {NONE=-1,NORMAL=0,BLOCKER=1,ATTACK=2,MOVEMENT=3,ROUGH=4}
+enum tileLayerIDs {TERRAIN=0,OVERLAY=1}
 
 var flippedTiles = []
 
 # Called when the node enters the scene tree for the first time.
 func _ready():
 	$AI_Library.initialize(allies,enemies,$TileMap)
-	$TileMap.add_layer(1)
+	$TileMap.add_layer(tileLayerIDs.OVERLAY)
 	
-	allies.append(allied_unit.instantiate())
-	allies.append(allied_unit.instantiate())
-	var alliedSpawnCoords = [Vector2(5,1),Vector2(6,1)]
-	for a in range(len(allies)):
+	var alliedSpawnCoords = [Vector2(4,3),Vector2(4,5),Vector2(4,7),Vector2(6,8)]
+	for a in range(len(alliedSpawnCoords)):
+		allies.append(allied_unit.instantiate())
 		allies[a].position = $TileMap.map_to_local(alliedSpawnCoords[a])
 		add_child(allies[a])
 	enemies.append(enemy_unit.instantiate())
-	for e in enemies:
-		e.position = $TileMap.map_to_local(Vector2(14,5))
-		add_child(e)
+	var enemySpawnCoords = [Vector2(12,6), Vector2(12,8), Vector2(14,2), Vector2(20,7), Vector2(21,1)]
+	for e in range(len(enemySpawnCoords)):
+		enemies.append(enemy_unit.instantiate())
+		enemies[e].position = $TileMap.map_to_local(enemySpawnCoords[e])
+		add_child(enemies[e])
 
 func _input(event):
 	if event is InputEventMouseButton and playerTurn and not(menuEnabled):
+		if event.button_index == MOUSE_BUTTON_RIGHT and event.pressed and unit != null:
+			deselectUnit()
 		if event.button_index == MOUSE_BUTTON_LEFT and event.pressed:
 			#Checks if the click was on a unit
 			if unit == null or not(unit.selected):
 				unit = getClickedUnit(event.position)
 			#If a unit was clicked or is already selected
 			if unit != null:
+				
 				#Moves the unit to the clicked location
-				if unit.selected and $TileMap.get_cell_source_id(1,$TileMap.local_to_map(event.position)) == 3:
+				if unit.selected and $TileMap.get_cell_source_id(tileLayerIDs.OVERLAY,$TileMap.local_to_map(event.position)) == tileSourceIDs.MOVEMENT:
 					#THIS WILL CAUSE A BUG IF ANYTHING HAPPENS TO PLAYER POSITION OR SPEED
 					#IN BETWEEN PLAYER SELECTION AND THE MOVEMENT.
-					#var validMovementTiles = validGroundMovements(centerOnTile(unit.position),unit.getSpeed(),"allied")
-					flipTile(-1,flippedTiles)
+					flipTile(tileSourceIDs.NONE,flippedTiles)
 					unit.position = centerOnTile(event.position)
-					var adjEnemiesList = getAdjacentEnemies(unit,"allied",false)
+					var adjEnemiesList = $AI_Library.getAdjacentEnemies(unit,align.ALLY,false)
 					if len(adjEnemiesList) > 0:
-						flipTile(2,adjEnemiesList)
+						flipTile(tileSourceIDs.ATTACK,adjEnemiesList)
 					else:
-						unit.toggleReady(false)
 						unit.toggleSelect(false)
+						unit.toggleReady(false)
+						checkEndOfTurn()
+					unit.toggleReady(false)
+					
 				#If there are attack options availible
-				elif unit.selected and $TileMap.get_cell_source_id(1,$TileMap.local_to_map(event.position)) == 2:
-					var adjEnemiesList = getAdjacentEnemies(unit,"allied",false)
-					flipTile(-1,adjEnemiesList)
+				elif unit.selected and $TileMap.get_cell_source_id(tileLayerIDs.OVERLAY,$TileMap.local_to_map(event.position)) == tileSourceIDs.ATTACK:
+					var adjEnemiesList = $AI_Library.getAdjacentEnemies(unit,align.ALLY,false)
+					flipTile(tileSourceIDs.NONE,adjEnemiesList)
 					for e in enemies:
 						if e.position == centerOnTile(event.position):
 							e.takeHit(unit.getAttack(),true)
 					unit.toggleSelect(false)
 					unit.toggleReady(false)
+					checkEndOfTurn()
 				#Selects the unit and highlights options
 				elif not(unit.selected) and $TileMap.local_to_map(event.position) == $TileMap.local_to_map(unit.position) and unit.isReady:
 					unit.toggleSelect(true)
-					flippedTiles = validGroundMovements(centerOnTile(unit.position),unit.getSpeed(),"allied")
-					flipTile(3,flippedTiles)
-
-	#Opens pause menu
+					flippedTiles = validGroundMovements(centerOnTile(unit.position),unit.getSpeed(),align.ALLY)
+					flipTile(tileSourceIDs.MOVEMENT,flippedTiles)
+		#Opens pause menu
 	if event.is_action_pressed("pauseMenu") and not(menuEnabled):
 		exitMenu = Menu.instantiate()
 		add_child(exitMenu)
@@ -79,6 +91,13 @@ func _input(event):
 		get_tree().paused = false
 		exitMenu.queue_free()
 
+func deselectUnit():
+	if unit.selected:
+		unit.toggleSelect(false)
+		flipTile(tileSourceIDs.NONE,flippedTiles)
+		var adjEnemiesList = $AI_Library.getAdjacentEnemies(unit,align.ALLY,false)
+		flipTile(-1,adjEnemiesList)
+
 func getClickedUnit(pos):
 	var centeredPos = centerOnTile(pos)
 	for a in allies:
@@ -86,62 +105,28 @@ func getClickedUnit(pos):
 			return a
 	return null
 
-func getAdjacentEnemies(unit, alignment:String, getUnits:bool):
-	var adjList = getAdjacentTiles(centerOnTile(unit.position))
-	var adjEnemyList = []
-	
-	if alignment == "allied":
-		for e in enemies:
-			if e.position in adjList:
-				if getUnits:
-					adjEnemyList.append(e)
-				else:
-					adjEnemyList.append(e.position)
-				
-	if alignment == "enemy":
-		for a in allies:
-			if a.position in adjList:
-				if getUnits:
-					adjEnemyList.append(a)
-				else:
-					adjEnemyList.append(a.position)
-				
-	return adjEnemyList
-
 #Flips tiles to their highlit state
 #Atlas layer guide: 0=base state, 2=attackable state, 3=movableState
 func flipTile(atlasID:int,posList:Array):
-	if atlasID != -1:
+	if atlasID != tileSourceIDs.NONE:
 		for pos in posList:
-			$TileMap.set_cell(1,$TileMap.local_to_map(pos),atlasID,Vector2i(0,0))
+			$TileMap.set_cell(tileLayerIDs.OVERLAY,$TileMap.local_to_map(pos),atlasID,Vector2i(0,0))
 	else:
 		for pos in posList:
-			$TileMap.erase_cell(1,$TileMap.local_to_map(pos))
+			$TileMap.erase_cell(tileLayerIDs.OVERLAY,$TileMap.local_to_map(pos))
 
 #Takes a local vector2 of position, and returns the local vector2 position centered on the nearest tile
 func centerOnTile(pos:Vector2):
 	return $TileMap.map_to_local($TileMap.local_to_map(pos))
 
-#Checks if anything would impede movement on the specified tile. Uses local coordinates, but must already be centered
-#Alignment values: "allied", "enemy". All other values will treat units as impassable
-func isPassable(pos:Vector2, alignment:String):
-	if alignment != "allied":
-		for a in allies:
-			if pos == a.position:
-				return false
-	if alignment != "enemy":
-		for e in enemies:
-			if pos == e.position:
-				return false
-	return $TileMap.get_cell_tile_data(0,$TileMap.local_to_map(pos),false).get_custom_data("isPassable")
-
-func validGroundMovements(startPos:Vector2, speed:int, alignment:String):
+#Use align enum for alignment
+func validGroundMovements(startPos:Vector2, speed:int, alignment):
 	var returnList = []
 	validGroundMovementsRec(startPos,speed,true,alignment,returnList)
 	return returnList
 
 
-func validGroundMovementsRec(startPos:Vector2, speed:int, validTarget:bool, alignment:String, tileList:Array):
+func validGroundMovementsRec(startPos:Vector2, speed:int, validTarget:bool, alignment, tileList:Array):
 	if validTarget:
 		tileList.append(startPos)
 	if speed == 0:
@@ -149,10 +134,10 @@ func validGroundMovementsRec(startPos:Vector2, speed:int, validTarget:bool, alig
 	else:
 		var adjTileList = getAdjacentTiles(startPos)
 		for tile in adjTileList:
-			var cost = $TileMap.get_cell_tile_data(0,$TileMap.local_to_map(tile),false).get_custom_data("moveCost")
-			if isPassable(tile,"none") and speed - cost >= 0:
+			var cost = $TileMap.get_cell_tile_data(tileLayerIDs.TERRAIN,$TileMap.local_to_map(tile),false).get_custom_data("moveCost")
+			if $AI_Library.isPassable(tile,align.NEUTRAL) and speed - cost >= 0:
 				validGroundMovementsRec(tile, speed-cost, true, alignment, tileList)
-			elif isPassable(tile,alignment) and speed - cost >= 0:
+			elif $AI_Library.isPassable(tile,alignment) and speed - cost >= 0:
 				validGroundMovementsRec(tile, speed-cost, false, alignment, tileList)
 		return tileList
 
@@ -173,13 +158,27 @@ func _process(delta):
 		menuEnabled = false
 		get_tree().paused = false
 	$EndTurnButton.position = get_viewport_rect().size - $EndTurnButton.size
-	if playerTurn == true:
-		var noRemainingMoves = true
-		for a in allies:
-			if a.isReady:
-				noRemainingMoves = false
-		if noRemainingMoves:
-			_on_end_turn_button_pressed()
+
+func checkEndOfTurn():
+	var noRemainingMoves = true
+	for a in allies:
+		if a.isReady:
+			noRemainingMoves = false
+	if noRemainingMoves and unit.selected == false and len(enemies) > 0:
+		_on_end_turn_button_pressed()
+
+func checkEndOfGame():
+	if len(enemies) == 0:
+		get_tree().paused = true
+		var msg = victory_msg.instantiate()
+		add_child(msg)
+		msg.position = Vector2(get_viewport_rect().size/2)-$EnemyTurnLabel.size/2
+	elif len(allies) == 0:
+		get_tree().paused = true
+		var msg = victory_msg.instantiate()
+		add_child(msg)
+		msg.position = Vector2(get_viewport_rect().size/2)-$EnemyTurnLabel.size/2
+		msg.changeToDefeat()
 
 func _on_enemy_turn_label_timer_timeout():
 	playerTurn = true
@@ -195,21 +194,31 @@ func doEnemyTurn(enemy):
 	if enemy.getAiType() == "basic":
 		$AI_Library.basic_AI(enemy)
 
-
 func removeEnemy(enemy):
+	var indOfRemoval = -1
 	for i in range(len(enemies)):
 		if enemies[i] == enemy:
-			enemies.remove_at(i)
+			indOfRemoval = i
+	if indOfRemoval != -1:
+		enemies.remove_at(indOfRemoval)
+		checkEndOfGame()
 
 func removeAlly(ally):
+	var indOfRemoval = -1
 	for i in range(len(allies)):
 		if allies[i] == ally:
-			allies.remove_at(i)
+			indOfRemoval = i
+	if indOfRemoval != -1:
+		allies.remove_at(indOfRemoval)
+		checkEndOfGame()
 
 func _on_end_turn_button_pressed():
 	if unit != null:
-		flipTile(-1, flippedTiles)
 		unit.toggleSelect(false)
+	#Resets overlay
+	$TileMap.remove_layer(tileLayerIDs.OVERLAY)
+	$TileMap.add_layer(tileLayerIDs.OVERLAY)
+	
 	playerTurn = false
 	$EndTurnButton.disabled = true
 	$EnemyTurnLabel.show()

@@ -7,6 +7,7 @@ var maxHitPoints = 0
 var speed = 0
 var attack = 0
 var defense = 0
+var dead = false
 
 
 # Called when the node enters the scene tree for the first time.
@@ -43,6 +44,7 @@ func takeHit(dmg, isBlockable):
 
 func die():
 	#This is meant to be overriden by a parent node or otherwise edited.
+	dead = true
 	queue_free()
 	
 

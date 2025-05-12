@@ -12,6 +12,19 @@ func _ready():
 
 func takeHit(dmg:int, isBlockable:bool):
 	$Unit.takeHit(dmg,isBlockable)
+	checkDeath()
+	
+
+func checkDeath():
+	if not(self.has_node("Unit")):
+		get_parent().removeEnemy(self)
+		queue_free()
+		return true
+	elif $Unit.dead == true:
+		get_parent().removeEnemy(self)
+		queue_free()
+		return true
+	return false
 
 func getSpeed():
 	return $Unit.speed
@@ -24,6 +37,4 @@ func getAiType():
 
 # Called every frame. 'delta' is the elapsed time since the previous frame.
 func _process(delta):
-	if not(self.has_node("Unit")):
-		get_parent().removeEnemy(self)
-		queue_free()
+	pass
