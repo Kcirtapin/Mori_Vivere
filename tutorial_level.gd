@@ -30,7 +30,7 @@ func _ready():
 		allies.append(allied_unit.instantiate())
 		allies[a].position = $TileMap.map_to_local(alliedSpawnCoords[a])
 		add_child(allies[a])
-	enemies.append(enemy_unit.instantiate())
+		
 	var enemySpawnCoords = [Vector2(12,6), Vector2(12,8), Vector2(14,2), Vector2(20,7), Vector2(21,1)]
 	for e in range(len(enemySpawnCoords)):
 		enemies.append(enemy_unit.instantiate())
