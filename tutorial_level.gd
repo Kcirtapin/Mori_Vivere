@@ -15,15 +15,18 @@ var enemies = []
 var allies = []
 
 enum align {ALLY,ENEMY,NEUTRAL}
-enum tileSourceIDs {NONE=-1,NORMAL=0,BLOCKER=1,ATTACK=2,MOVEMENT=3,ROUGH=4}
-enum tileLayerIDs {TERRAIN=0,OVERLAY=1}
+enum tileSourceIDs {NONE=-1,NORMAL=0,BLOCKER=1,ATTACK=2,MOVEMENT=3,ROUGH=4,MOUSE=6}
+enum tileLayerIDs {TERRAIN=0,MOUSE=1,OVERLAY=2}
 
 var flippedTiles = []
+var prevMouseOverlay = null
 
 # Called when the node enters the scene tree for the first time.
 func _ready():
 	$AI_Library.initialize(allies,enemies,$TileMap)
+	$TileMap.add_layer(tileLayerIDs.MOUSE)
 	$TileMap.add_layer(tileLayerIDs.OVERLAY)
+	
 	
 	var alliedSpawnCoords = [Vector2(4,3),Vector2(4,5),Vector2(4,7),Vector2(6,8)]
 	for a in range(len(alliedSpawnCoords)):
@@ -38,6 +41,12 @@ func _ready():
 		add_child(enemies[e])
 
 func _input(event):
+	if event is InputEventMouseMotion and playerTurn and not(menuEnabled):
+		if prevMouseOverlay != null and prevMouseOverlay != $TileMap.local_to_map(event.position):
+			$TileMap.erase_cell(tileLayerIDs.MOUSE,prevMouseOverlay)
+		prevMouseOverlay = $TileMap.local_to_map(event.position)
+		$TileMap.set_cell(tileLayerIDs.MOUSE,prevMouseOverlay,tileSourceIDs.MOUSE,Vector2i(0,0))
+
 	if event is InputEventMouseButton and playerTurn and not(menuEnabled):
 		if event.button_index == MOUSE_BUTTON_RIGHT and event.pressed and unit != null:
 			deselectUnit()
