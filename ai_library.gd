@@ -91,7 +91,8 @@ func getPathToGood(startPos, endPos):
 				if (tile not in usedTiles.keys() and isPassable(tile,align.ENEMY, crntElevation)) or tile == endPos:
 					usedTiles[tile] = 0
 					var newList = crntRoute.duplicate()
-					newList.push_back(tile)
+					for i in range(tileMap.get_cell_tile_data(0,tileMap.local_to_map(tile),false).get_custom_data("moveCost")):
+						newList.push_back(tile)
 					routeList.push_back(newList)
 	return []
 ## AI models ##
@@ -107,12 +108,12 @@ func basic_AI(enemy):
 	var speed = enemy.getSpeed()
 	if len(targetList) > 1:
 		targetList.pop_front()
-		var cost = tileMap.get_cell_tile_data(0,tileMap.local_to_map(targetList[0]),false).get_custom_data("moveCost")
-		while speed >= cost and len(targetList) > 0:
+		#var cost = tileMap.get_cell_tile_data(0,tileMap.local_to_map(targetList[0]),false).get_custom_data("moveCost")
+		while speed >= 1 and len(targetList) > 0:
 			enemy.position = targetList.pop_front()
-			speed -= cost
-			if len(targetList) > 0:
-				cost = tileMap.get_cell_tile_data(0,tileMap.local_to_map(targetList[0]),false).get_custom_data("moveCost")
+			speed -= 1
+			#if len(targetList) > 0:
+			#		cost = tileMap.get_cell_tile_data(0,tileMap.local_to_map(targetList[0]),false).get_custom_data("moveCost")
 	var adjAllies = getAdjacentEnemies(enemy,align.ENEMY,true)
 	if len(adjAllies) > 0:
 		adjAllies[0].takeHit(enemy.getAttack(),true)

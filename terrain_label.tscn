@@ -1,0 +1,36 @@
+[gd_scene load_steps=3 format=3 uid="uid://bawkcttrd5c0d"]
+
+[sub_resource type="LabelSettings" id="LabelSettings_tak0o"]
+font_size = 12
+shadow_color = Color(0, 0, 0, 1)
+
+[sub_resource type="LabelSettings" id="LabelSettings_wsq6q"]
+font_size = 12
+font_color = Color(0.796243, 0.796243, 0.796243, 1)
+shadow_color = Color(0, 0, 0, 1)
+
+[node name="Terrain_Label" type="Control"]
+layout_mode = 3
+anchors_preset = 0
+offset_right = 40.0
+offset_bottom = 40.0
+
+[node name="Background" type="Polygon2D" parent="."]
+scale = Vector2(100, 100)
+color = Color(0, 0, 1, 1)
+polygon = PackedVector2Array(-0.01, 0, -0.01, 0.88, 1.05, 0.88, 1.06, 0)
+
+[node name="TileName" type="Label" parent="."]
+layout_mode = 0
+offset_right = 107.0
+offset_bottom = 23.0
+text = "Test"
+label_settings = SubResource("LabelSettings_tak0o")
+horizontal_alignment = 1
+
+[node name="Elevation" type="Label" parent="."]
+offset_top = 20.0
+offset_right = 107.0
+offset_bottom = 43.0
+text = "  Elevation: "
+label_settings = SubResource("LabelSettings_wsq6q")

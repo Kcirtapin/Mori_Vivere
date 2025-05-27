@@ -27,7 +27,6 @@ func _ready():
 	$TileMap.add_layer(tileLayerIDs.MOUSE)
 	$TileMap.add_layer(tileLayerIDs.OVERLAY)
 	
-	
 	var alliedSpawnCoords = [Vector2(4,3),Vector2(4,5),Vector2(4,7),Vector2(6,8)]
 	for a in range(len(alliedSpawnCoords)):
 		allies.append(allied_unit.instantiate())
@@ -46,6 +45,9 @@ func _input(event):
 			$TileMap.erase_cell(tileLayerIDs.MOUSE,prevMouseOverlay)
 		prevMouseOverlay = $TileMap.local_to_map(event.position)
 		$TileMap.set_cell(tileLayerIDs.MOUSE,prevMouseOverlay,tileSourceIDs.MOUSE,Vector2i(0,0))
+		var terrainTile = $TileMap.get_cell_tile_data(tileLayerIDs.TERRAIN,prevMouseOverlay)
+		if terrainTile != null:
+			pass
 
 	if event is InputEventMouseButton and playerTurn and not(menuEnabled):
 		if event.button_index == MOUSE_BUTTON_RIGHT and event.pressed and unit != null:
