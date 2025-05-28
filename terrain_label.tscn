@@ -1,4 +1,6 @@
-[gd_scene load_steps=3 format=3 uid="uid://bawkcttrd5c0d"]
+[gd_scene load_steps=4 format=3 uid="uid://bawkcttrd5c0d"]
+
+[ext_resource type="Script" path="res://terrain_label.gd" id="1_jro82"]
 
 [sub_resource type="LabelSettings" id="LabelSettings_tak0o"]
 font_size = 12
@@ -12,25 +14,34 @@ shadow_color = Color(0, 0, 0, 1)
 [node name="Terrain_Label" type="Control"]
 layout_mode = 3
 anchors_preset = 0
-offset_right = 40.0
-offset_bottom = 40.0
+offset_right = 109.0
+offset_bottom = 89.0
+script = ExtResource("1_jro82")
 
 [node name="Background" type="Polygon2D" parent="."]
 scale = Vector2(100, 100)
 color = Color(0, 0, 1, 1)
-polygon = PackedVector2Array(-0.01, 0, -0.01, 0.88, 1.05, 0.88, 1.06, 0)
+polygon = PackedVector2Array(-0.01, 0, -0.01, 0.88, 0.52, 0.7, 1.05, 0.88, 1.06, 0)
 
 [node name="TileName" type="Label" parent="."]
 layout_mode = 0
 offset_right = 107.0
 offset_bottom = 23.0
-text = "Test"
+text = "Terrain"
 label_settings = SubResource("LabelSettings_tak0o")
 horizontal_alignment = 1
 
 [node name="Elevation" type="Label" parent="."]
+layout_mode = 0
 offset_top = 20.0
 offset_right = 107.0
 offset_bottom = 43.0
-text = "  Elevation: "
+text = "     Elevation: "
+label_settings = SubResource("LabelSettings_wsq6q")
+
+[node name="MoveCost" type="Label" parent="."]
+offset_top = 40.0
+offset_right = 107.0
+offset_bottom = 63.0
+text = "   Move Cost: "
 label_settings = SubResource("LabelSettings_wsq6q")

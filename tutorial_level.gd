@@ -8,6 +8,7 @@ var exitMenu
 @export var allied_unit: PackedScene
 @export var enemy_unit: PackedScene
 @export var victory_msg: PackedScene
+@export var terrain_label: PackedScene
 
 var unit
 var playerTurn = true
@@ -20,6 +21,9 @@ enum tileLayerIDs {TERRAIN=0,MOUSE=1,OVERLAY=2}
 
 var flippedTiles = []
 var prevMouseOverlay = null
+
+
+var crntTerrainLabel = null
 
 # Called when the node enters the scene tree for the first time.
 func _ready():
@@ -41,13 +45,20 @@ func _ready():
 
 func _input(event):
 	if event is InputEventMouseMotion and playerTurn and not(menuEnabled):
+		var newLabelNeeded = false
 		if prevMouseOverlay != null and prevMouseOverlay != $TileMap.local_to_map(event.position):
 			$TileMap.erase_cell(tileLayerIDs.MOUSE,prevMouseOverlay)
+			newLabelNeeded = true
 		prevMouseOverlay = $TileMap.local_to_map(event.position)
-		$TileMap.set_cell(tileLayerIDs.MOUSE,prevMouseOverlay,tileSourceIDs.MOUSE,Vector2i(0,0))
+		$TileMap.set_cell(tileLayerIDs.MOUSE,prevMouseOverlay,tileSourceIDs.MOUSE,Vector2i.ZERO)
 		var terrainTile = $TileMap.get_cell_tile_data(tileLayerIDs.TERRAIN,prevMouseOverlay)
-		if terrainTile != null:
-			pass
+		if terrainTile != null and newLabelNeeded:
+			if crntTerrainLabel != null:
+				crntTerrainLabel.delete()
+			crntTerrainLabel = terrain_label.instantiate()
+			add_child(crntTerrainLabel)
+			crntTerrainLabel.initialize(terrainTile)
+			crntTerrainLabel.position = Vector2.ZERO
 
 	if event is InputEventMouseButton and playerTurn and not(menuEnabled):
 		if event.button_index == MOUSE_BUTTON_RIGHT and event.pressed and unit != null:
