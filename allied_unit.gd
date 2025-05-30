@@ -10,7 +10,8 @@ func _ready():
 	var SPEED = 3
 	var ATTACK = 6
 	var DEFENSE = 1
-	$Unit.initialize(MAXHP,SPEED,ATTACK,DEFENSE)
+	var NAME = "Good Guy"
+	$Unit.initialize(NAME,MAXHP,SPEED,ATTACK,DEFENSE)
 
 # Called every frame. 'delta' is the elapsed time since the previous frame.
 func _process(delta):
@@ -25,6 +26,15 @@ func getSpeed():
 
 func getAttack():
 	return $Unit.attack
+
+func getHP():
+	return $Unit.hitPoints
+
+func getMaxHP():
+	return $Unit.maxHitPoints
+
+func getName():
+	return $Unit.unitName
 
 func takeHit(dmg:int, isBlockable:bool):
 	$Unit.takeHit(dmg,isBlockable)

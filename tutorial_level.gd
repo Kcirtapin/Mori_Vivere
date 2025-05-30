@@ -9,6 +9,7 @@ var exitMenu
 @export var enemy_unit: PackedScene
 @export var victory_msg: PackedScene
 @export var terrain_label: PackedScene
+@export var unit_label: PackedScene
 
 var unit
 var playerTurn = true
@@ -24,6 +25,7 @@ var prevMouseOverlay = null
 
 
 var crntTerrainLabel = null
+var crntUnitLabel = null
 
 # Called when the node enters the scene tree for the first time.
 func _ready():
@@ -55,10 +57,18 @@ func _input(event):
 		if terrainTile != null and newLabelNeeded:
 			if crntTerrainLabel != null:
 				crntTerrainLabel.delete()
+				if crntUnitLabel != null:
+					crntUnitLabel.delete()
 			crntTerrainLabel = terrain_label.instantiate()
 			add_child(crntTerrainLabel)
 			crntTerrainLabel.initialize(terrainTile)
 			crntTerrainLabel.position = Vector2.ZERO
+			var hoveredUnit = getUnitAt(event.position)
+			if hoveredUnit != null:
+				crntUnitLabel = unit_label.instantiate()
+				add_child(crntUnitLabel)
+				crntUnitLabel.initialize(hoveredUnit.getName(),hoveredUnit.getHP(),hoveredUnit.getMaxHP())
+				crntUnitLabel.position = Vector2(crntTerrainLabel.size.x*1.2,0)
 
 	if event is InputEventMouseButton and playerTurn and not(menuEnabled):
 		if event.button_index == MOUSE_BUTTON_RIGHT and event.pressed and unit != null:
@@ -125,6 +135,16 @@ func getClickedUnit(pos):
 	for a in allies:
 		if a.position == centeredPos:
 			return a
+	return null
+
+func getUnitAt(pos):
+	var centeredPos = centerOnTile(pos)
+	for a in allies:
+		if a.position == centeredPos:
+			return a
+	for e in enemies:
+		if e.position == centeredPos:
+			return e
 	return null
 
 #Flips tiles to their highlit state

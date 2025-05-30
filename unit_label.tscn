@@ -1,0 +1,51 @@
+[gd_scene load_steps=4 format=3 uid="uid://b7d47vvnwgeh1"]
+
+[ext_resource type="Script" path="res://unit_label.gd" id="1_si5os"]
+
+[sub_resource type="LabelSettings" id="LabelSettings_tak0o"]
+font_size = 12
+shadow_color = Color(0, 0, 0, 1)
+
+[sub_resource type="LabelSettings" id="LabelSettings_wsq6q"]
+font_size = 12
+font_color = Color(0.796243, 0.796243, 0.796243, 1)
+shadow_color = Color(0, 0, 0, 1)
+
+[node name="Unit_Label" type="Control"]
+layout_mode = 3
+anchors_preset = 0
+offset_right = 109.0
+offset_bottom = 89.0
+script = ExtResource("1_si5os")
+
+[node name="Background" type="Polygon2D" parent="."]
+scale = Vector2(100, 100)
+color = Color(0, 0, 1, 1)
+polygon = PackedVector2Array(-0.01, 0, -0.01, 0.88, 0.52, 0.7, 1.05, 0.88, 1.06, 0)
+
+[node name="UnitName" type="Label" parent="."]
+layout_mode = 0
+offset_right = 107.0
+offset_bottom = 23.0
+text = "Name"
+label_settings = SubResource("LabelSettings_tak0o")
+horizontal_alignment = 1
+
+[node name="HealthNumber" type="Label" parent="."]
+layout_mode = 0
+offset_top = 20.0
+offset_right = 107.0
+offset_bottom = 43.0
+text = "     HP:   10/10"
+label_settings = SubResource("LabelSettings_wsq6q")
+
+[node name="HPGaugeBackground" type="Polygon2D" parent="."]
+position = Vector2(-1.47945, 0)
+scale = Vector2(1.12329, 1)
+polygon = PackedVector2Array(12, 48, 12, 64, 85, 64, 85, 48)
+
+[node name="HPGaugeMeter" type="Polygon2D" parent="."]
+position = Vector2(-1.47945, 0)
+scale = Vector2(1.12329, 1)
+color = Color(1, 0, 0, 1)
+polygon = PackedVector2Array(12, 48, 12, 64, 85, 64, 85, 48)

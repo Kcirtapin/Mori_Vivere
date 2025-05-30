@@ -8,7 +8,8 @@ func _ready():
 	var SPEED = 3
 	var ATTACK = 6
 	var DEFENSE = 1
-	$Unit.initialize(MAXHP,SPEED,ATTACK,DEFENSE)
+	var NAME = "Bad Guy"
+	$Unit.initialize(NAME,MAXHP,SPEED,ATTACK,DEFENSE)
 
 func takeHit(dmg:int, isBlockable:bool):
 	$Unit.takeHit(dmg,isBlockable)
@@ -31,6 +32,15 @@ func getSpeed():
 
 func getAttack():
 	return $Unit.attack
+
+func getHP():
+	return $Unit.hitPoints
+
+func getMaxHP():
+	return $Unit.maxHitPoints
+
+func getName():
+	return $Unit.unitName
 
 func getAiType():
 	return AI_TYPE

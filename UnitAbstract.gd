@@ -8,18 +8,20 @@ var speed = 0
 var attack = 0
 var defense = 0
 var dead = false
+var unitName = ""
 
 
 # Called when the node enters the scene tree for the first time.
 func _ready():
 	pass # Replace with function body.
 
-func initialize(maxHP, spd, atk, def):
+func initialize(UN, maxHP, spd, atk, def):
 	hitPoints = maxHP
 	maxHitPoints = maxHP
 	speed = spd
 	attack = atk
 	defense = def
+	unitName = UN
 	
 
 func takeHit(dmg, isBlockable):

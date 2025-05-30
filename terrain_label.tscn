@@ -8,7 +8,7 @@ shadow_color = Color(0, 0, 0, 1)
 
 [sub_resource type="LabelSettings" id="LabelSettings_wsq6q"]
 font_size = 12
-font_color = Color(0.796243, 0.796243, 0.796243, 1)
+font_color = Color(0.762907, 0.762723, 0.802655, 1)
 shadow_color = Color(0, 0, 0, 1)
 
 [node name="Terrain_Label" type="Control"]
@@ -20,7 +20,7 @@ script = ExtResource("1_jro82")
 
 [node name="Background" type="Polygon2D" parent="."]
 scale = Vector2(100, 100)
-color = Color(0, 0, 1, 1)
+color = Color(0, 0.772549, 0, 1)
 polygon = PackedVector2Array(-0.01, 0, -0.01, 0.88, 0.52, 0.7, 1.05, 0.88, 1.06, 0)
 
 [node name="TileName" type="Label" parent="."]
@@ -40,6 +40,7 @@ text = "     Elevation: "
 label_settings = SubResource("LabelSettings_wsq6q")
 
 [node name="MoveCost" type="Label" parent="."]
+layout_mode = 0
 offset_top = 40.0
 offset_right = 107.0
 offset_bottom = 63.0
