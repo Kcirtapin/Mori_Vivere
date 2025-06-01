@@ -36,6 +36,9 @@ func getMaxHP():
 func getName():
 	return $Unit.unitName
 
+func getDefense():
+	return $Unit.defense
+
 func takeHit(dmg:int, isBlockable:bool):
 	$Unit.takeHit(dmg,isBlockable)
 

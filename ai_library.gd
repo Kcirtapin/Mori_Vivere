@@ -95,27 +95,52 @@ func getPathToGood(startPos, endPos):
 						newList.push_back(tile)
 					routeList.push_back(newList)
 	return []
+
+func compareDefenses(a,b):
+	var aDef = a.getDefense()
+	var bDef = b.getDefense()
+	if aDef < bDef:
+		return -1
+	elif aDef > bDef:
+		return 1
+	return 0
 ## AI models ##
 # Note - no ML used. It's all algorithms
 func basic_AI(enemy):
-	var target = allies[0]
 	var targetList = getPathToGood(enemy.position,allies[0].position)
 	for a in allies:
 		var potentialRouteList = getPathToGood(enemy.position,a.position)
 		if (len(potentialRouteList) < len(targetList) and potentialRouteList != []) or targetList == []:
-			target = a
 			targetList = potentialRouteList
 	var speed = enemy.getSpeed()
 	if len(targetList) > 1:
 		targetList.pop_front()
-		#var cost = tileMap.get_cell_tile_data(0,tileMap.local_to_map(targetList[0]),false).get_custom_data("moveCost")
 		while speed >= 1 and len(targetList) > 0:
 			enemy.position = targetList.pop_front()
 			speed -= 1
-			#if len(targetList) > 0:
-			#		cost = tileMap.get_cell_tile_data(0,tileMap.local_to_map(targetList[0]),false).get_custom_data("moveCost")
 	var adjAllies = getAdjacentEnemies(enemy,align.ENEMY,true)
 	if len(adjAllies) > 0:
 		adjAllies[0].takeHit(enemy.getAttack(),true)
 
-
+#Moves towards closest unit. If there are multiple units in attacking range, attack the one with the lowest defense
+func targetSquishyAI(enemy):
+	var targetQueue = []
+	var targetList = getPathToGood(enemy.position,allies[0].position)
+	var speed = enemy.getSpeed()
+	for a in allies:
+		var potentialRouteList = getPathToGood(enemy.position,a.position)
+		if (len(potentialRouteList) < len(targetList) and potentialRouteList != []) or targetList == []:
+			targetList = potentialRouteList
+			if len(targetList) <= speed:
+				targetQueue.append(a)
+	if len(targetQueue) > 0:
+		targetQueue.sort_custom(compareDefenses)
+		targetList = getPathToGood(enemy.position,targetQueue[0].position)
+	if len(targetList) > 1:
+		targetList.pop_front()
+		while speed >= 1 and len(targetList) > 0:
+			enemy.position = targetList.pop_front()
+			speed -= 1
+	var adjAllies = getAdjacentEnemies(enemy,align.ENEMY,true)
+	if len(adjAllies) > 0:
+		adjAllies[0].takeHit(enemy.getAttack(),true)
