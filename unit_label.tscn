@@ -40,12 +40,10 @@ text = "     HP:   10/10"
 label_settings = SubResource("LabelSettings_wsq6q")
 
 [node name="HPGaugeBackground" type="Polygon2D" parent="."]
-position = Vector2(-1.47945, 0)
-scale = Vector2(1.12329, 1)
-polygon = PackedVector2Array(12, 48, 12, 64, 85, 64, 85, 48)
+position = Vector2(12, 48)
+polygon = PackedVector2Array(-1, 0, -1, 18, 73, 18, 73, 0)
 
 [node name="HPGaugeMeter" type="Polygon2D" parent="."]
-position = Vector2(-1.47945, 0)
-scale = Vector2(1.12329, 1)
+position = Vector2(12, 48)
 color = Color(1, 0, 0, 1)
-polygon = PackedVector2Array(12, 48, 12, 64, 85, 64, 85, 48)
+polygon = PackedVector2Array(-1, 0, -1, 18, 73, 18, 73, 0)
