@@ -28,9 +28,13 @@ func isPassable(pos:Vector2, alignment, prevElevation:int):
 			if pos == e.position:
 				return false
 	if tileMap.get_cell_tile_data(0,tileMap.local_to_map(pos),false) == null:
-		tileMap.get_cell_tile_data(0,tileMap.local_to_map(pos),false)
 		return false
 	return tileMap.get_cell_tile_data(0,tileMap.local_to_map(pos),false).get_custom_data("isPassable") and abs(tileMap.get_cell_tile_data(0,tileMap.local_to_map(pos),false).get_custom_data("elevation")-prevElevation) <= 1
+
+#Checks if a unit could occupy this space
+#Use align enum for alignment parameter
+func isOccupyable(pos:Vector2, prevElevation:int):
+	return isPassable(pos,align.NEUTRAL,prevElevation)
 
 func centerOnTile(pos:Vector2):
 	return tileMap.map_to_local(tileMap.local_to_map(pos))
@@ -82,9 +86,10 @@ func getPathToGood(startPos, endPos):
 		var crntElevation = tileMap.get_cell_tile_data(0,tileMap.local_to_map(crntRoute[len(crntRoute)-1]),false).get_custom_data("elevation")
 		#print(crntRoute)
 		if crntRoute[len(crntRoute)-1] == endPos:
-			if not isPassable(crntRoute[len(crntRoute)-1], align.ENEMY, crntElevation):
+			if not isOccupyable(crntRoute[len(crntRoute)-1], crntElevation):
 				crntRoute.pop_back()
-			return crntRoute
+			if isOccupyable(crntRoute[len(crntRoute)-1], crntElevation):
+				return crntRoute
 		elif len(crntRoute) <= MAX_MOVES:
 			var adjTiles = getAdjacentTiles(crntRoute[len(crntRoute)-1])
 			for tile in adjTiles:
