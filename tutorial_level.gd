@@ -7,6 +7,7 @@ var exitMenu
 
 @export var allied_unit: PackedScene
 @export var enemy_unit: PackedScene
+@export var tanky_enemy: PackedScene
 @export var victory_msg: PackedScene
 @export var terrain_label: PackedScene
 @export var unit_label: PackedScene
@@ -39,10 +40,13 @@ func _ready():
 		allies[a].position = $TileMap.map_to_local(alliedSpawnCoords[a])
 		add_child(allies[a])
 		
-	var enemySpawnCoords = [Vector2(12,6), Vector2(12,8), Vector2(14,2), Vector2(20,7), Vector2(21,1)]
+	var enemySpawnCoords = [[Vector2(12,6),"reg"], [Vector2(12,8),"reg"], [Vector2(14,2),"reg"], [Vector2(20,7),"reg"], [Vector2(21,1),"tank"]]
 	for e in range(len(enemySpawnCoords)):
-		enemies.append(enemy_unit.instantiate())
-		enemies[e].position = $TileMap.map_to_local(enemySpawnCoords[e])
+		if enemySpawnCoords[e][1] == "reg":
+			enemies.append(enemy_unit.instantiate())
+		elif enemySpawnCoords[e][1] == "tank":
+			enemies.append(tanky_enemy.instantiate())
+		enemies[e].position = $TileMap.map_to_local(enemySpawnCoords[e][0])
 		add_child(enemies[e])
 
 func _input(event):
@@ -230,6 +234,7 @@ func _on_enemy_turn_label_timer_timeout():
 	$EnemyTurnLabel.hide()
 	$EnemyTurnLabelTimer.stop()
 	for a in allies:
+		a.resetDefense()
 		a.toggleReady(true)
 	$EndTurnButton.disabled = false
 
@@ -262,6 +267,8 @@ func _on_end_turn_button_pressed():
 	$TileMap.remove_layer(tileLayerIDs.OVERLAY)
 	$TileMap.add_layer(tileLayerIDs.OVERLAY)
 	
+	for e in enemies:
+		e.resetDefense()
 	playerTurn = false
 	$EndTurnButton.disabled = true
 	$EnemyTurnLabel.show()

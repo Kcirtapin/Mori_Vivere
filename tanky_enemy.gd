@@ -4,10 +4,10 @@ var AI_TYPE = "basic"
 
 # Called when the node enters the scene tree for the first time.
 func _ready():
-	var MAXHP = 10
-	var SPEED = 3
-	var ATTACK = 6
-	var DEFENSE = 1
+	var MAXHP = 15
+	var SPEED = 2
+	var ATTACK = 2
+	var DEFENSE = 5
 	var NAME = "Bad Guy"
 	$Unit.initialize(NAME,MAXHP,SPEED,ATTACK,DEFENSE)
 

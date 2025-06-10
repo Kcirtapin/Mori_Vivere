@@ -39,6 +39,9 @@ func getName():
 func getDefense():
 	return $Unit.defense
 
+func resetDefense():
+	$Unit.resetDefense()
+
 func takeHit(dmg:int, isBlockable:bool):
 	$Unit.takeHit(dmg,isBlockable)
 

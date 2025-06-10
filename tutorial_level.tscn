@@ -1,4 +1,4 @@
-[gd_scene load_steps=25 format=3 uid="uid://hkxvfkcdc7tf"]
+[gd_scene load_steps=26 format=3 uid="uid://hkxvfkcdc7tf"]
 
 [ext_resource type="Script" path="res://tutorial_level.gd" id="1_4lexe"]
 [ext_resource type="Texture2D" uid="uid://daicu1k8y15io" path="res://art/Placeholder_Tilemap.png" id="1_h5cw8"]
@@ -6,6 +6,7 @@
 [ext_resource type="PackedScene" uid="uid://c2y4k0u2j8hiy" path="res://menu.tscn" id="2_ftwfe"]
 [ext_resource type="Texture2D" uid="uid://chqjmq4ky1yxl" path="res://art/Copy of HexTemp.png" id="3_86dit"]
 [ext_resource type="PackedScene" uid="uid://bots0u7ydo4i8" path="res://enemy_unit.tscn" id="4_srpwu"]
+[ext_resource type="PackedScene" uid="uid://mx0jlowtfb4r" path="res://tanky_enemy.tscn" id="5_h7tq3"]
 [ext_resource type="Texture2D" uid="uid://doa0hukt3kbgy" path="res://art/Copy of HexTempOverlay.png" id="5_i6ohi"]
 [ext_resource type="PackedScene" uid="uid://dv0fve2vq6300" path="res://victory_screen.tscn" id="5_k32mi"]
 [ext_resource type="PackedScene" uid="uid://bawkcttrd5c0d" path="res://terrain_label.tscn" id="6_3lwv0"]
@@ -130,6 +131,7 @@ script = ExtResource("1_4lexe")
 Menu = ExtResource("2_ftwfe")
 allied_unit = ExtResource("2_0c5fu")
 enemy_unit = ExtResource("4_srpwu")
+tanky_enemy = ExtResource("5_h7tq3")
 victory_msg = ExtResource("5_k32mi")
 terrain_label = ExtResource("6_3lwv0")
 unit_label = ExtResource("7_adbun")
