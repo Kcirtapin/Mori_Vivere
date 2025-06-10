@@ -7,6 +7,7 @@ var maxHitPoints = 0
 var speed = 0
 var attack = 0
 var defense = 0
+var crntDefense = 0
 var dead = false
 var unitName = ""
 
@@ -21,13 +22,18 @@ func initialize(UN, maxHP, spd, atk, def):
 	speed = spd
 	attack = atk
 	defense = def
+	crntDefense = defense
 	unitName = UN
 	
 
-func takeHit(dmg, isBlockable):
+func takeHit(initialDamage, isBlockable):
+	var dmg = initialDamage
 	#Uses defense to reduce damage if applicable
 	if isBlockable:
-		dmg-=defense
+		dmg-=crntDefense
+		crntDefense-=int(initialDamage/2)
+		if crntDefense < defense/2:
+			crntDefense = int(defense/2)
 		#Exits method if damage is reduced to nothing
 		if dmg<=0:
 			return
@@ -43,7 +49,9 @@ func takeHit(dmg, isBlockable):
 		hitPoints-=dmg
 		
 	
-
+func resetDefense():
+	crntDefense = defense
+	
 func die():
 	#This is meant to be overriden by a parent node or otherwise edited.
 	dead = true
