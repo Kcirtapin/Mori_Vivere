@@ -41,9 +41,9 @@ label_settings = SubResource("LabelSettings_wsq6q")
 
 [node name="HPGaugeBackground" type="Polygon2D" parent="."]
 position = Vector2(12, 48)
-polygon = PackedVector2Array(-1, 0, -1, 18, 73, 18, 73, 0)
+polygon = PackedVector2Array(0, 0, 81, 0, 81, 14, 0, 14)
 
 [node name="HPGaugeMeter" type="Polygon2D" parent="."]
 position = Vector2(12, 48)
 color = Color(1, 0, 0, 1)
-polygon = PackedVector2Array(-1, 0, -1, 18, 73, 18, 73, 0)
+polygon = PackedVector2Array(0, 0, 81, 0, 81, 14, 0, 14)
