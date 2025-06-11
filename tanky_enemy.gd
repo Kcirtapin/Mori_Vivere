@@ -1,6 +1,6 @@
 extends Area2D
 
-var AI_TYPE = "basic"
+var AI_TYPE = "weakest"
 
 # Called when the node enters the scene tree for the first time.
 func _ready():
@@ -8,7 +8,7 @@ func _ready():
 	var SPEED = 2
 	var ATTACK = 2
 	var DEFENSE = 5
-	var NAME = "Bad Guy"
+	var NAME = "Tank"
 	$Unit.initialize(NAME,MAXHP,SPEED,ATTACK,DEFENSE)
 
 func takeHit(dmg:int, isBlockable:bool):

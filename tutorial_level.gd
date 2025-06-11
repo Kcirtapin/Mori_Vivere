@@ -106,6 +106,7 @@ func _input(event):
 					for e in enemies:
 						if e.position == centerOnTile(event.position):
 							e.takeHit(unit.getAttack(),true)
+							crntUnitLabel.updateHealthBar(e.getHP(),e.getMaxHP())
 					unit.toggleSelect(false)
 					unit.toggleReady(false)
 					checkEndOfTurn()
@@ -241,6 +242,8 @@ func _on_enemy_turn_label_timer_timeout():
 func doEnemyTurn(enemy):
 	if enemy.getAiType() == "basic":
 		$AI_Library.basic_AI(enemy)
+	elif enemy.getAiType() == "weakest":
+		$AI_Library.targetSquishyAI(enemy)
 
 func removeEnemy(enemy):
 	var indOfRemoval = -1

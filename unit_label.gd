@@ -14,10 +14,14 @@ func _process(delta):
 
 func initialize(name, crntHealth, maxHealth):
 	unitName = name
+	$UnitName.text = unitName
+	updateHealthBar(crntHealth,maxHealth)
+
+func updateHealthBar(crntHealth, maxHealth):
 	HP = float(crntHealth)
 	maxHP = float(maxHealth)
-	$UnitName.text = unitName
 	$HealthNumber.text = "     HP:   "+str(HP)+"/"+str(maxHP)
+	$HPGaugeMeter.apply_scale(Vector2.ONE)
 	$HPGaugeMeter.apply_scale(Vector2(float(HP)/float(maxHP),1.0))
 
 func delete():
