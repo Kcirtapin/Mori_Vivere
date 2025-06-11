@@ -4,9 +4,7 @@ var allies
 var enemies
 var tileMap
 enum align {ALLY,ENEMY,NEUTRAL}
-# Called when the node enters the scene tree for the first time.
-func _ready():
-	pass # Replace with function body.
+
 
 #Must be initialized with a list of enemies, allies, and a tilemap. "Ally" and "enemy" are from the player's perspective
 func initialize(a, e, t):
@@ -74,15 +72,15 @@ func getAdjacentEnemies(unit, alignment, getUnits:bool):
 	return adjEnemyList
 
 func getPathToGood(startPos, endPos):
-	var routeList = []
+	var routeList = DEPQ.new()
 	var MAX_MOVES = 15
 	var routeNotFound = true
 	var crntRoute = [startPos]
 	#The 0 in the usedTiles dictionary is a dummy value. usedTiles is essentially a set
 	var usedTiles = {startPos:0}
-	routeList.append(crntRoute)
-	while routeNotFound and len(routeList) > 0:
-		crntRoute = routeList.pop_front()
+	routeList.add(crntRoute,crntRoute.size())
+	while routeNotFound and routeList.size() > 0:
+		crntRoute = routeList.pop_min()
 		var crntElevation = tileMap.get_cell_tile_data(0,tileMap.local_to_map(crntRoute[len(crntRoute)-1]),false).get_custom_data("elevation")
 		#print(crntRoute)
 		if crntRoute[len(crntRoute)-1] == endPos:
@@ -98,7 +96,7 @@ func getPathToGood(startPos, endPos):
 					var newList = crntRoute.duplicate()
 					for i in range(tileMap.get_cell_tile_data(0,tileMap.local_to_map(tile),false).get_custom_data("moveCost")):
 						newList.push_back(tile)
-					routeList.push_back(newList)
+					routeList.add(newList,newList.size())
 	return []
 
 func compareDefenses(a,b):
