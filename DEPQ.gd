@@ -1,3 +1,7 @@
+#Source: https://gist.github.com/arkology/1d4a2ae2816060c932aa5732caad7d9b
+#Author: arkology
+#Minor edits to prevent errors
+
 class_name DEPQ
 
 # Double-ended priority queue using standart array and standart custom_sort() function

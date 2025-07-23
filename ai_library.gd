@@ -52,7 +52,6 @@ func getAdjacentEnemies(unit, alignment, getUnits:bool):
 	var adjList = getAdjacentTiles(centerOnTile(unit.position))
 	var adjEnemyList = []
 	
-
 	if alignment == align.ALLY:
 		for e in enemies:
 			if e.position in adjList:
@@ -97,53 +96,70 @@ func getPathToGood(startPos, endPos):
 					for i in range(tileMap.get_cell_tile_data(0,tileMap.local_to_map(tile),false).get_custom_data("moveCost")):
 						newList.push_back(tile)
 					routeList.add(newList,newList.size())
-	return []
+	return [null]
 
 func compareDefenses(a,b):
 	var aDef = a.getDefense()
 	var bDef = b.getDefense()
-	if aDef < bDef:
-		return -1
-	elif aDef > bDef:
-		return 1
-	return 0
+	var aHP = a.getHP()
+	var bHP = b.getHP()
+	if aDef > bDef:
+		return true
+	elif aDef < bDef:
+		return false
+	else:
+		if aHP > bHP:
+			return true
+		elif aHP < bHP:
+			return false
+	return true
+
+func move(path, entity):
+	var speed = entity.getSpeed()
+	if len(path) > 1:
+		path.pop_front()
+		while speed >= 1 and len(path) > 0:
+			entity.position = path.pop_front()
+			speed -= 1
 ## AI models ##
 # Note - no ML used. It's all algorithms
 func basic_AI(enemy):
-	var targetList = getPathToGood(enemy.position,allies[0].position)
-	for a in allies:
-		var potentialRouteList = getPathToGood(enemy.position,a.position)
-		if (len(potentialRouteList) < len(targetList) and potentialRouteList != []) or targetList == []:
-			targetList = potentialRouteList
-	var speed = enemy.getSpeed()
-	if len(targetList) > 1:
-		targetList.pop_front()
-		while speed >= 1 and len(targetList) > 0:
-			enemy.position = targetList.pop_front()
-			speed -= 1
+	if len(getAdjacentEnemies(enemy,align.ENEMY,true)) == 0:
+		var targetList = getPathToGood(enemy.position,allies[0].position)
+		for a in allies:
+			var potentialRouteList = getPathToGood(enemy.position,a.position)
+			if (len(potentialRouteList) < len(targetList) and potentialRouteList != [null]) or targetList == []:
+				targetList = potentialRouteList
+		move(targetList,enemy)
+		#var speed = enemy.getSpeed()
+		#if len(targetList) > 1:
+			#targetList.pop_front()
+			#while speed >= 1 and len(targetList) > 0:
+				#enemy.position = targetList.pop_front()
+				#speed -= 1
 	var adjAllies = getAdjacentEnemies(enemy,align.ENEMY,true)
 	if len(adjAllies) > 0:
 		adjAllies[0].takeHit(enemy.getAttack(),true)
 
 #Moves towards closest unit. If there are multiple units in attacking range, attack the one with the lowest defense
 func targetSquishyAI(enemy):
-	var targetQueue = []
-	var targetList = getPathToGood(enemy.position,allies[0].position)
+	var targetQueue:Array = allies.duplicate()
 	var speed = enemy.getSpeed()
 	for a in allies:
 		var potentialRouteList = getPathToGood(enemy.position,a.position)
-		if (len(potentialRouteList) < len(targetList) and potentialRouteList != []) or targetList == []:
-			targetList = potentialRouteList
-			if len(targetList) <= speed:
-				targetQueue.append(a)
-	if len(targetQueue) > 0:
-		targetQueue.sort_custom(compareDefenses)
-		targetList = getPathToGood(enemy.position,targetQueue[0].position)
-	if len(targetList) > 1:
-		targetList.pop_front()
-		while speed >= 1 and len(targetList) > 0:
-			enemy.position = targetList.pop_front()
-			speed -= 1
-	var adjAllies = getAdjacentEnemies(enemy,align.ENEMY,true)
-	if len(adjAllies) > 0:
-		adjAllies[0].takeHit(enemy.getAttack(),true)
+		if len(potentialRouteList) > speed or potentialRouteList == [null]:
+			targetQueue.remove_at(targetQueue.find(a))
+	if len(targetQueue) == 0:
+		print("No nearby targets")
+		targetQueue = allies.duplicate()
+	targetQueue.sort_custom(compareDefenses)
+	print(targetQueue)
+	var adjTargets = getAdjacentEnemies(enemy,align.ENEMY,true)
+	if targetQueue[len(targetQueue)-1] in adjTargets:
+		adjTargets.pop_back().takeHit(enemy.getAttack(),true)
+	else:
+		move(getPathToGood(enemy.position, targetQueue.pop_back().position),enemy)
+		adjTargets = getAdjacentEnemies(enemy,align.ENEMY,true)
+		if len(adjTargets) > 0:
+			adjTargets.sort_custom(compareDefenses)
+			adjTargets.pop_back().takeHit(enemy.getAttack(),true)

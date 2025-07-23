@@ -56,3 +56,6 @@ func toggleSelect(sel:bool):
 
 func toggleReady(ready):
 	isReady = ready
+
+func _to_string():
+	return "HP="+str(getHP())+", Def="+str(getDefense())
