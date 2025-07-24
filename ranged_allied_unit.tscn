@@ -1,0 +1,43 @@
+[gd_scene load_steps=7 format=3 uid="uid://chcdaikkqauy7"]
+
+[ext_resource type="Script" path="res://ranged_allied_unit.gd" id="1_p672f"]
+[ext_resource type="PackedScene" uid="uid://cc17p0bj20v1f" path="res://UnitAbstract.tscn" id="1_xiekg"]
+[ext_resource type="Texture2D" uid="uid://btbd1u7b5ot6u" path="res://art/placeholder units/sprite_2.png" id="2_ahtjo"]
+[ext_resource type="Texture2D" uid="uid://bv14y7bk0pffm" path="res://art/placeholder units/sprite_3.png" id="3_s5dvd"]
+
+[sub_resource type="CircleShape2D" id="CircleShape2D_8q6ye"]
+radius = 16.1245
+
+[sub_resource type="SpriteFrames" id="SpriteFrames_0wpfy"]
+animations = [{
+"frames": [{
+"duration": 1.0,
+"texture": ExtResource("2_ahtjo")
+}],
+"loop": true,
+"name": &"base",
+"speed": 5.0
+}, {
+"frames": [{
+"duration": 1.0,
+"texture": ExtResource("2_ahtjo")
+}, {
+"duration": 1.0,
+"texture": ExtResource("3_s5dvd")
+}],
+"loop": true,
+"name": &"selected",
+"speed": 5.0
+}]
+
+[node name="ranged_allied_unit" type="Area2D"]
+script = ExtResource("1_p672f")
+
+[node name="Unit" parent="." instance=ExtResource("1_xiekg")]
+
+[node name="CollisionShape2D" type="CollisionShape2D" parent="."]
+shape = SubResource("CircleShape2D_8q6ye")
+
+[node name="AnimatedSprite2D" type="AnimatedSprite2D" parent="."]
+sprite_frames = SubResource("SpriteFrames_0wpfy")
+animation = &"base"
