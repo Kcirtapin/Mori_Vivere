@@ -7,6 +7,8 @@ var maxHitPoints = 0
 var speed = 0
 var attack = 0
 var defense = 0
+var minRange = 0
+var maxRange = 0
 var crntDefense = 0
 var dead = false
 var unitName = ""
@@ -16,7 +18,7 @@ var unitName = ""
 func _ready():
 	pass # Replace with function body.
 
-func initialize(UN, maxHP, spd, atk, def):
+func initialize(UN, maxHP, spd, atk, def, minR, maxR):
 	hitPoints = maxHP
 	maxHitPoints = maxHP
 	speed = spd
@@ -24,7 +26,8 @@ func initialize(UN, maxHP, spd, atk, def):
 	defense = def
 	crntDefense = defense
 	unitName = UN
-	
+	minRange = minR
+	maxRange = maxR
 
 func takeHit(initialDamage, isBlockable):
 	var dmg = initialDamage

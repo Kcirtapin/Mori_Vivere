@@ -10,8 +10,10 @@ func _ready():
 	var SPEED = 4
 	var ATTACK = 7
 	var DEFENSE = 0
-	var NAME = "Good Guy"
-	$Unit.initialize(NAME,MAXHP,SPEED,ATTACK,DEFENSE)
+	var MIN_RANGE = 2
+	var MAX_RANGE = 2
+	var NAME = "Archer"
+	$Unit.initialize(NAME,MAXHP,SPEED,ATTACK,DEFENSE,MIN_RANGE,MAX_RANGE)
 
 # Called every frame. 'delta' is the elapsed time since the previous frame.
 func _process(delta):

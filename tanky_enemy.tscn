@@ -1,8 +1,8 @@
 [gd_scene load_steps=6 format=3 uid="uid://mx0jlowtfb4r"]
 
-[ext_resource type="Texture2D" uid="uid://da3xyaxe7rnxb" path="res://art/Placeholder_Units/sprite_3.png" id="1_6xmq8"]
 [ext_resource type="Script" path="res://tanky_enemy.gd" id="1_fks30"]
 [ext_resource type="Script" path="res://UnitAbstract.gd" id="2_e72ti"]
+[ext_resource type="Texture2D" uid="uid://7bh3nstkj723" path="res://art/placeholder units/sprite_5.png" id="3_crdho"]
 
 [sub_resource type="CircleShape2D" id="CircleShape2D_xxk53"]
 radius = 18.0
@@ -11,7 +11,7 @@ radius = 18.0
 animations = [{
 "frames": [{
 "duration": 1.0,
-"texture": ExtResource("1_6xmq8")
+"texture": ExtResource("3_crdho")
 }],
 "loop": true,
 "name": &"default",
@@ -21,11 +21,11 @@ animations = [{
 [node name="TankyEnemy" type="Area2D"]
 script = ExtResource("1_fks30")
 
+[node name="Unit" type="Node2D" parent="."]
+script = ExtResource("2_e72ti")
+
 [node name="CollisionShape2D" type="CollisionShape2D" parent="."]
 shape = SubResource("CircleShape2D_xxk53")
 
 [node name="AnimatedSprite2D" type="AnimatedSprite2D" parent="."]
 sprite_frames = SubResource("SpriteFrames_16blt")
-
-[node name="Unit" type="Node2D" parent="."]
-script = ExtResource("2_e72ti")

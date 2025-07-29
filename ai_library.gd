@@ -70,6 +70,40 @@ func getAdjacentEnemies(unit, alignment, getUnits:bool):
 				
 	return adjEnemyList
 
+func getTilesAtRange(pos,minRange,maxRange,getUnits,alignment):
+	var outDict = {pos:0}
+	for i in range(minRange):
+		outDict.merge(expandRangeOne(outDict))
+	var removeDict = outDict.duplicate()
+	for i in range(minRange,maxRange):
+		outDict.merge(expandRangeOne(outDict))
+	for p in removeDict:
+		outDict.remove(p)
+	var outList = []
+	for p in outDict:
+		outList.append(p)
+	if getUnits:
+		var unitList = []
+		if alignment != align.ALLY:
+			for a in allies:
+				if a.position in outList:
+					unitList.append(a)
+		if alignment != align.ENEMY:
+			for e in enemies:
+				if e.position in outList:
+					unitList.append(e)
+		return unitList
+	else:
+		return outList
+
+func expandRangeOne(posDict:Dictionary):
+	var outDict = Dictionary()
+	for pos in posDict:
+		var adjTiles = getAdjacentTiles(pos)
+		for tile in adjTiles:
+			outDict[tile] = 0
+	return outDict
+
 func getPathToGood(startPos, endPos):
 	var routeList = DEPQ.new()
 	var MAX_MOVES = 15

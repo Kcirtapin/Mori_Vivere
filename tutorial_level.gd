@@ -11,6 +11,7 @@ var exitMenu
 @export var victory_msg: PackedScene
 @export var terrain_label: PackedScene
 @export var unit_label: PackedScene
+@export var ranged_allied_unit: PackedScene
 
 var unit
 var playerTurn = true
@@ -34,10 +35,13 @@ func _ready():
 	$TileMap.add_layer(tileLayerIDs.MOUSE)
 	$TileMap.add_layer(tileLayerIDs.OVERLAY)
 	
-	var alliedSpawnCoords = [Vector2(4,3),Vector2(4,5),Vector2(4,7),Vector2(6,8)]
+	var alliedSpawnCoords = [[Vector2(4,3),"reg"],[Vector2(4,5),"ranged"],[Vector2(4,7),"reg"],[Vector2(6,8),"reg"],[Vector2(6,5),"reg"]]
 	for a in range(len(alliedSpawnCoords)):
-		allies.append(allied_unit.instantiate())
-		allies[a].position = $TileMap.map_to_local(alliedSpawnCoords[a])
+		if alliedSpawnCoords[a][1] == "reg":
+			allies.append(allied_unit.instantiate())
+		elif alliedSpawnCoords[a][1] == "ranged":
+			allies.append(ranged_allied_unit.instantiate())
+		allies[a].position = $TileMap.map_to_local(alliedSpawnCoords[a][0])
 		add_child(allies[a])
 		
 	var enemySpawnCoords = [[Vector2(12,6),"reg"], [Vector2(12,8),"reg"], [Vector2(14,2),"reg"], [Vector2(20,7),"reg"], [Vector2(21,1),"tank"]]
@@ -83,7 +87,6 @@ func _input(event):
 				unit = getClickedUnit(event.position)
 			#If a unit was clicked or is already selected
 			if unit != null:
-				
 				#Moves the unit to the clicked location
 				if unit.selected and $TileMap.get_cell_source_id(tileLayerIDs.OVERLAY,$TileMap.local_to_map(event.position)) == tileSourceIDs.MOVEMENT:
 					#THIS WILL CAUSE A BUG IF ANYTHING HAPPENS TO PLAYER POSITION OR SPEED

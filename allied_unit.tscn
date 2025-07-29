@@ -2,8 +2,8 @@
 
 [ext_resource type="PackedScene" uid="uid://cc17p0bj20v1f" path="res://UnitAbstract.tscn" id="1_7uon6"]
 [ext_resource type="Script" path="res://allied_unit.gd" id="1_b0oxc"]
-[ext_resource type="Texture2D" uid="uid://cg2hchh6siltg" path="res://art/Placeholder_Units/sprite_0.png" id="2_acqrf"]
-[ext_resource type="Texture2D" uid="uid://cehpr12sbogas" path="res://art/Placeholder_Units/sprite_1.png" id="4_ka5xs"]
+[ext_resource type="Texture2D" uid="uid://bt482oe2uq864" path="res://art/placeholder units/sprite_0.png" id="3_6aijn"]
+[ext_resource type="Texture2D" uid="uid://bxpfkfxsdbmyv" path="res://art/placeholder units/sprite_1.png" id="4_vhq6y"]
 
 [sub_resource type="CircleShape2D" id="CircleShape2D_aeskb"]
 radius = 17.0
@@ -12,7 +12,7 @@ radius = 17.0
 animations = [{
 "frames": [{
 "duration": 1.0,
-"texture": ExtResource("2_acqrf")
+"texture": ExtResource("3_6aijn")
 }],
 "loop": true,
 "name": &"base",
@@ -20,14 +20,14 @@ animations = [{
 }, {
 "frames": [{
 "duration": 1.0,
-"texture": ExtResource("2_acqrf")
+"texture": ExtResource("3_6aijn")
 }, {
 "duration": 1.0,
-"texture": ExtResource("4_ka5xs")
+"texture": ExtResource("4_vhq6y")
 }],
 "loop": true,
 "name": &"selected",
-"speed": 2.0
+"speed": 5.0
 }]
 
 [node name="AlliedUnit" type="Area2D"]
@@ -43,7 +43,6 @@ shape = SubResource("CircleShape2D_aeskb")
 
 [node name="AnimatedSprite2D" type="AnimatedSprite2D" parent="."]
 sprite_frames = SubResource("SpriteFrames_unnea")
-animation = &"selected"
-frame_progress = 0.143574
+animation = &"base"
 
 [connection signal="input_event" from="." to="." method="_on_input_event"]

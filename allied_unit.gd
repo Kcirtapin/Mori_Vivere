@@ -11,7 +11,9 @@ func _ready():
 	var ATTACK = 6
 	var DEFENSE = 1
 	var NAME = "Good Guy"
-	$Unit.initialize(NAME,MAXHP,SPEED,ATTACK,DEFENSE)
+	var MIN_RANGE = 1
+	var MAX_RANGE = 1
+	$Unit.initialize(NAME,MAXHP,SPEED,ATTACK,DEFENSE,MIN_RANGE,MAX_RANGE)
 
 # Called every frame. 'delta' is the elapsed time since the previous frame.
 func _process(delta):

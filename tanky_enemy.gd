@@ -9,7 +9,9 @@ func _ready():
 	var ATTACK = 2
 	var DEFENSE = 5
 	var NAME = "Tank"
-	$Unit.initialize(NAME,MAXHP,SPEED,ATTACK,DEFENSE)
+	var MIN_RANGE = 1
+	var MAX_RANGE = 1
+	$Unit.initialize(NAME,MAXHP,SPEED,ATTACK,DEFENSE,MIN_RANGE,MAX_RANGE)
 
 func takeHit(dmg:int, isBlockable:bool):
 	$Unit.takeHit(dmg,isBlockable)
