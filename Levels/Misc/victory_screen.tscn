@@ -1,7 +1,7 @@
 [gd_scene load_steps=3 format=3 uid="uid://dv0fve2vq6300"]
 
-[ext_resource type="Script" path="res://victory_screen.gd" id="1_ifph6"]
-[ext_resource type="LabelSettings" uid="uid://cqci1hpob16xk" path="res://menu.tres" id="1_lpehd"]
+[ext_resource type="Script" path="res://Levels/Misc/victory_screen.gd" id="1_ifph6"]
+[ext_resource type="LabelSettings" uid="uid://cqci1hpob16xk" path="res://Levels/Misc/menu.tres" id="1_lpehd"]
 
 [node name="Victory_Screen" type="Node2D"]
 process_mode = 3

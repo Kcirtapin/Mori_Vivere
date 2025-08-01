@@ -1,6 +1,6 @@
 [gd_scene load_steps=4 format=3 uid="uid://b7d47vvnwgeh1"]
 
-[ext_resource type="Script" path="res://unit_label.gd" id="1_si5os"]
+[ext_resource type="Script" path="res://Levels/Misc/unit_label.gd" id="1_si5os"]
 
 [sub_resource type="LabelSettings" id="LabelSettings_tak0o"]
 font_size = 12

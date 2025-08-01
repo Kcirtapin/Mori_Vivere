@@ -1,7 +1,7 @@
 [gd_scene load_steps=3 format=3 uid="uid://c2y4k0u2j8hiy"]
 
-[ext_resource type="Script" path="res://menu.gd" id="1_r5won"]
-[ext_resource type="LabelSettings" uid="uid://cqci1hpob16xk" path="res://menu.tres" id="2_pb68b"]
+[ext_resource type="Script" path="res://Levels/Misc/menu.gd" id="1_r5won"]
+[ext_resource type="LabelSettings" uid="uid://cqci1hpob16xk" path="res://Levels/Misc/menu.tres" id="2_pb68b"]
 
 [node name="Menu" type="Node2D"]
 process_mode = 2

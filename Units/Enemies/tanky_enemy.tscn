@@ -1,7 +1,7 @@
 [gd_scene load_steps=6 format=3 uid="uid://mx0jlowtfb4r"]
 
-[ext_resource type="Script" path="res://tanky_enemy.gd" id="1_fks30"]
-[ext_resource type="Script" path="res://UnitAbstract.gd" id="2_e72ti"]
+[ext_resource type="Script" path="res://Units/Enemies/tanky_enemy.gd" id="1_fks30"]
+[ext_resource type="Script" path="res://Units/UnitAbstract.gd" id="2_e72ti"]
 [ext_resource type="Texture2D" uid="uid://7bh3nstkj723" path="res://art/placeholder units/sprite_5.png" id="3_crdho"]
 
 [sub_resource type="CircleShape2D" id="CircleShape2D_xxk53"]

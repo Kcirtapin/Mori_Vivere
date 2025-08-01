@@ -129,7 +129,7 @@ func _input(event):
 
 func highlightAttacks(crntUnit):
 	var options = $AI_Library.getTilesAtRange(crntUnit.position,crntUnit.getMinRange(),crntUnit.getMaxRange(),true,align.ALLY)
-	print(options)
+	#print(options)
 	if len(options) > 0:
 		flippedTiles = []
 		flippedTiles.resize(len(options))

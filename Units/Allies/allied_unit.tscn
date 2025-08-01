@@ -1,18 +1,18 @@
 [gd_scene load_steps=7 format=3 uid="uid://n4mv7ites0eh"]
 
-[ext_resource type="PackedScene" uid="uid://cc17p0bj20v1f" path="res://UnitAbstract.tscn" id="1_7uon6"]
-[ext_resource type="Script" path="res://allied_unit.gd" id="1_b0oxc"]
-[ext_resource type="Texture2D" uid="uid://bt482oe2uq864" path="res://art/placeholder units/sprite_0.png" id="3_6aijn"]
-[ext_resource type="Texture2D" uid="uid://bxpfkfxsdbmyv" path="res://art/placeholder units/sprite_1.png" id="4_vhq6y"]
+[ext_resource type="Script" path="res://Units/Allies/allied_unit.gd" id="1_cfcvf"]
+[ext_resource type="PackedScene" uid="uid://cc17p0bj20v1f" path="res://Units/UnitAbstract.tscn" id="2_hu8rh"]
+[ext_resource type="Texture2D" uid="uid://bt482oe2uq864" path="res://art/placeholder units/sprite_0.png" id="3_tlyo0"]
+[ext_resource type="Texture2D" uid="uid://bxpfkfxsdbmyv" path="res://art/placeholder units/sprite_1.png" id="4_lv0rk"]
 
 [sub_resource type="CircleShape2D" id="CircleShape2D_aeskb"]
-radius = 17.0
+radius = 16.0
 
 [sub_resource type="SpriteFrames" id="SpriteFrames_unnea"]
 animations = [{
 "frames": [{
 "duration": 1.0,
-"texture": ExtResource("3_6aijn")
+"texture": ExtResource("3_tlyo0")
 }],
 "loop": true,
 "name": &"base",
@@ -20,10 +20,10 @@ animations = [{
 }, {
 "frames": [{
 "duration": 1.0,
-"texture": ExtResource("3_6aijn")
+"texture": ExtResource("3_tlyo0")
 }, {
 "duration": 1.0,
-"texture": ExtResource("4_vhq6y")
+"texture": ExtResource("4_lv0rk")
 }],
 "loop": true,
 "name": &"selected",
@@ -34,9 +34,9 @@ animations = [{
 process_mode = 1
 collision_layer = 2
 collision_mask = 3
-script = ExtResource("1_b0oxc")
+script = ExtResource("1_cfcvf")
 
-[node name="Unit" parent="." instance=ExtResource("1_7uon6")]
+[node name="Unit" parent="." instance=ExtResource("2_hu8rh")]
 
 [node name="CollisionShape2D" type="CollisionShape2D" parent="."]
 shape = SubResource("CircleShape2D_aeskb")

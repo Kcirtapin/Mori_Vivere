@@ -1,22 +1,22 @@
 [gd_scene load_steps=27 format=3 uid="uid://hkxvfkcdc7tf"]
 
-[ext_resource type="Script" path="res://tutorial_level.gd" id="1_4lexe"]
+[ext_resource type="Script" path="res://Levels/Maps/tutorial_level.gd" id="1_4lexe"]
 [ext_resource type="Texture2D" uid="uid://daicu1k8y15io" path="res://art/Placeholder_Tilemap.png" id="1_h5cw8"]
-[ext_resource type="PackedScene" uid="uid://n4mv7ites0eh" path="res://allied_unit.tscn" id="2_0c5fu"]
-[ext_resource type="PackedScene" uid="uid://c2y4k0u2j8hiy" path="res://menu.tscn" id="2_ftwfe"]
+[ext_resource type="PackedScene" uid="uid://c2y4k0u2j8hiy" path="res://Levels/Misc/menu.tscn" id="2_ftwfe"]
+[ext_resource type="PackedScene" uid="uid://n4mv7ites0eh" path="res://Units/Allies/allied_unit.tscn" id="3_4tne1"]
 [ext_resource type="Texture2D" uid="uid://chqjmq4ky1yxl" path="res://art/Copy of HexTemp.png" id="3_86dit"]
-[ext_resource type="PackedScene" uid="uid://bots0u7ydo4i8" path="res://enemy_unit.tscn" id="4_srpwu"]
-[ext_resource type="PackedScene" uid="uid://mx0jlowtfb4r" path="res://tanky_enemy.tscn" id="5_h7tq3"]
+[ext_resource type="PackedScene" uid="uid://bots0u7ydo4i8" path="res://Units/Enemies/enemy_unit.tscn" id="4_0g6cc"]
+[ext_resource type="PackedScene" uid="uid://mx0jlowtfb4r" path="res://Units/Enemies/tanky_enemy.tscn" id="5_h7tq3"]
 [ext_resource type="Texture2D" uid="uid://doa0hukt3kbgy" path="res://art/Copy of HexTempOverlay.png" id="5_i6ohi"]
-[ext_resource type="PackedScene" uid="uid://dv0fve2vq6300" path="res://victory_screen.tscn" id="5_k32mi"]
-[ext_resource type="PackedScene" uid="uid://bawkcttrd5c0d" path="res://terrain_label.tscn" id="6_3lwv0"]
-[ext_resource type="PackedScene" uid="uid://b7d47vvnwgeh1" path="res://unit_label.tscn" id="7_adbun"]
+[ext_resource type="PackedScene" uid="uid://dv0fve2vq6300" path="res://Levels/Misc/victory_screen.tscn" id="6_eel1b"]
+[ext_resource type="PackedScene" uid="uid://b7d47vvnwgeh1" path="res://Levels/Misc/unit_label.tscn" id="7_adbun"]
+[ext_resource type="PackedScene" uid="uid://bawkcttrd5c0d" path="res://Levels/Misc/terrain_label.tscn" id="7_i4agb"]
 [ext_resource type="Texture2D" uid="uid://dnc7kqxxjdpcj" path="res://art/HexTempOverlay_Attacking.png" id="7_qqkv1"]
+[ext_resource type="PackedScene" uid="uid://chcdaikkqauy7" path="res://Units/Allies/ranged_allied_unit.tscn" id="9_bs3kf"]
 [ext_resource type="Texture2D" uid="uid://b8ae0qbkep0ny" path="res://art/RoughTerrain.png" id="9_cmu83"]
-[ext_resource type="PackedScene" uid="uid://chcdaikkqauy7" path="res://ranged_allied_unit.tscn" id="9_v63l1"]
-[ext_resource type="PackedScene" uid="uid://b5jy2lwhx67si" path="res://ai_library.tscn" id="9_wagfr"]
 [ext_resource type="Texture2D" uid="uid://dnlo01x37cva" path="res://art/PlaceHolderTileElevationChange.png" id="11_4t87c"]
 [ext_resource type="Texture2D" uid="uid://bgctqvtexcx3e" path="res://art/HexTempOverlay_MouseHover.png" id="12_48pda"]
+[ext_resource type="PackedScene" uid="uid://b5jy2lwhx67si" path="res://Levels/Misc/ai_library.tscn" id="17_xnqpg"]
 
 [sub_resource type="TileSetAtlasSource" id="TileSetAtlasSource_3l3iv"]
 texture = ExtResource("3_86dit")
@@ -130,20 +130,20 @@ font_size = 48
 process_mode = 3
 script = ExtResource("1_4lexe")
 Menu = ExtResource("2_ftwfe")
-allied_unit = ExtResource("2_0c5fu")
-enemy_unit = ExtResource("4_srpwu")
+allied_unit = ExtResource("3_4tne1")
+enemy_unit = ExtResource("4_0g6cc")
 tanky_enemy = ExtResource("5_h7tq3")
-victory_msg = ExtResource("5_k32mi")
-terrain_label = ExtResource("6_3lwv0")
+victory_msg = ExtResource("6_eel1b")
+terrain_label = ExtResource("7_i4agb")
 unit_label = ExtResource("7_adbun")
-ranged_allied_unit = ExtResource("9_v63l1")
+ranged_allied_unit = ExtResource("9_bs3kf")
 
 [node name="TileMap" type="TileMap" parent="."]
 tile_set = SubResource("TileSet_0t5q3")
 format = 2
 layer_0/tile_data = PackedInt32Array(131083, 4, 0, 196618, 4, 0, 262154, 0, 0, 327690, 0, 0, 262155, 0, 0, 262156, 0, 0, 196619, 0, 0, 196620, 0, 0, 131084, 0, 0, 131085, 0, 0, 65549, 0, 0, 131086, 0, 0, 65550, 0, 0, 131082, 0, 0, 65545, 0, 0, 65544, 0, 0, 131080, 0, 0, 131081, 0, 0, 327692, 0, 0, 327691, 0, 0, 393226, 0, 0, 393227, 0, 0, 393228, 0, 0, 196616, 0, 0, 262152, 0, 0, 327688, 0, 0, 327689, 131073, 0, 196617, 4, 0, 262153, 131073, 0, 131087, 0, 0, 196623, 0, 0, 262159, 65541, 0, 262158, 65541, 0, 327694, 5, 0, 327693, 0, 0, 196622, 131073, 0, 196621, 131073, 0, 262157, 131073, 0, 65551, 4, 0, 15, 131073, 0, 14, 131073, 0, 13, 131073, 0, 65548, 131073, 0, 65547, 131073, 0, 65546, 131073, 0, 9, 131073, 0, 8, 131073, 0, 7, 131073, 0, 65543, 4, 0, 131079, 0, 0, 196615, 0, 0, 262151, 0, 0, 327687, 0, 0, 458762, 4, 0, 458763, 4, 0, 393224, 0, 0, 458764, 0, 0, 393229, 0, 0, 393230, 65541, 0, 327695, 65541, 0, 262160, 0, 0, 196624, 0, 0, 131088, 4, 0, 393225, 0, 0, 65542, 0, 0, 131078, 0, 0, 65541, 0, 0, 131077, 0, 0, 131076, 0, 0, 65540, 131073, 0, 5, 131073, 0, 6, 131073, 0, 65553, 4, 0, 131089, 0, 0, 131090, 0, 0, 196626, 4, 0, 196627, 4, 0, 262163, 0, 0, 327700, 0, 0, 393236, 0, 0, 393237, 0, 0, 524309, 0, 0, 589845, 0, 0, 589844, 0, 0, 589843, 0, 0, 589842, 0, 0, 524305, 0, 0, 458769, 0, 0, 458768, 65541, 0, 393233, 4, 0, 393232, 65541, 0, 327697, 0, 0, 262161, 0, 0, 196625, 4, 0, 262162, 0, 0, 327698, 0, 0, 327699, 4, 0, 393234, 4, 0, 393235, 0, 0, 458771, 0, 0, 524307, 0, 0, 524308, 0, 0, 458772, 0, 0, 458770, 0, 0, 524306, 0, 0, 327696, 0, 0, 393231, 65541, 0, 458766, 65541, 0, 524302, 0, 0, 524303, 65541, 0, 589840, 0, 0, 524304, 5, 0, 458767, 65541, 0, 327701, 0, 0, 262165, 0, 0, 262164, 0, 0, 196628, 0, 0, 131091, 0, 0, 65555, 4, 0, 65554, 4, 0, 17, 4, 0, 65552, 4, 0, 19, 0, 0, 65556, 0, 0, 131092, 4, 0, 196629, 0, 0, 131093, 4, 0, 65557, 0, 0, 458765, 0, 0, 524301, 0, 0, 589838, 131073, 0, 589839, 131073, 0, 655376, 131073, 0, 589841, 131073, 0, 655378, 131073, 0, 655379, 131073, 0, 655380, 131073, 0, 655381, 131073, 0, 655382, 131073, 0, 589847, 131073, 0, 524311, 131073, 0, 458775, 131073, 0, 458776, 131073, 0, 393240, 131073, 0, 327704, 131073, 0, 262168, 131073, 0, 196631, 131073, 0, 131095, 131073, 0, 65559, 131073, 0, 23, 131073, 0, 22, 131073, 0, -65515, 131073, 0, 20, 131073, 0, -65517, 131073, 0, 18, 131073, 0, -65519, 131073, 0, 16, 131073, 0, 589846, 0, 0, 524310, 0, 0, 458773, 0, 0, 458774, 0, 0, 393238, 0, 0, 393239, 0, 0, 327703, 0, 0, 327702, 0, 0, 262167, 0, 0, 262166, 0, 0, 196630, 0, 0, 131094, 0, 0, 65558, 0, 0, 21, 0, 0, 524300, 0, 0, 589836, 0, 0, 524299, 0, 0, 589834, 0, 0, 524297, 0, 0, 589832, 0, 0, 524295, 0, 0, 458759, 0, 0, 458760, 0, 0, 458761, 4, 0, 524298, 4, 0, 524296, 0, 0, 262150, 0, 0, 196614, 0, 0, 131075, 0, 0, 196612, 0, 0, 262148, 0, 0, 196613, 0, 0, 327686, 0, 0, 393223, 0, 0, 262149, 0, 0, 327685, 0, 0, 327684, 0, 0, 393220, 0, 0, 393221, 0, 0, 458758, 0, 0, 393222, 0, 0, 524294, 0, 0, 589830, 0, 0, 524293, 0, 0, 458757, 0, 0, 458756, 0, 0, 327683, 0, 0, 262147, 0, 0, 196611, 0, 0, 393219, 0, 0, 458755, 0, 0, 524292, 0, 0, 589828, 0, 0, 589829, 0, 0, 589837, 131073, 0, 655372, 131073, 0, 589835, 131073, 0, 655370, 131073, 0, 589833, 131073, 0, 655368, 131073, 0, 589831, 131073, 0, 655366, 131073, 0, 655365, 131073, 0, 655364, 131073, 0, 589827, 131073, 0, 524291, 131073, 0, 524290, 131073, 0, 458754, 131073, 0, 393218, 131073, 0, 327682, 131073, 0, 262146, 131073, 0, 196610, 131073, 0, 131074, 131073, 0, 65539, 131073, 0)
 
-[node name="AI_Library" parent="." instance=ExtResource("9_wagfr")]
+[node name="AI_Library" parent="." instance=ExtResource("17_xnqpg")]
 
 [node name="EnemyTurnLabel" type="Label" parent="."]
 visible = false

@@ -1,8 +1,8 @@
 [gd_scene load_steps=4 format=3 uid="uid://bkys6iclog7eg"]
 
 [ext_resource type="Script" path="res://main.gd" id="1_akkss"]
-[ext_resource type="PackedScene" uid="uid://hkxvfkcdc7tf" path="res://tutorial_level.tscn" id="1_jd4wv"]
-[ext_resource type="LabelSettings" uid="uid://cqci1hpob16xk" path="res://menu.tres" id="3_t8e2g"]
+[ext_resource type="PackedScene" uid="uid://hkxvfkcdc7tf" path="res://Levels/Maps/tutorial_level.tscn" id="1_jd4wv"]
+[ext_resource type="LabelSettings" uid="uid://cqci1hpob16xk" path="res://Levels/Misc/menu.tres" id="3_t8e2g"]
 
 [node name="Main" type="Node2D"]
 process_mode = 3

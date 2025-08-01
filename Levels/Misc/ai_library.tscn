@@ -1,6 +1,6 @@
 [gd_scene load_steps=2 format=3 uid="uid://b5jy2lwhx67si"]
 
-[ext_resource type="Script" path="res://ai_library.gd" id="1_lxwe6"]
+[ext_resource type="Script" path="res://Levels/Misc/ai_library.gd" id="1_lxwe6"]
 
 [node name="AI_Library" type="Node2D"]
 script = ExtResource("1_lxwe6")
