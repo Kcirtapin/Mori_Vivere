@@ -26,6 +26,12 @@ func _process(delta):
 func getSpeed():
 	return $Unit.speed
 
+func getMinRange():
+	return $Unit.minRange
+
+func getMaxRange():
+	return $Unit.maxRange
+
 func getAttack():
 	return $Unit.attack
 

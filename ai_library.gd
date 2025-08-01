@@ -70,15 +70,18 @@ func getAdjacentEnemies(unit, alignment, getUnits:bool):
 				
 	return adjEnemyList
 
-func getTilesAtRange(pos,minRange,maxRange,getUnits,alignment):
+func getTilesAtRange(pos,minRange,maxRange,getUnits:bool,alignment):
 	var outDict = {pos:0}
-	for i in range(minRange):
+	for i in range(minRange-1):
 		outDict.merge(expandRangeOne(outDict))
+	#print("OutDict 1:  ",outDict)
 	var removeDict = outDict.duplicate()
-	for i in range(minRange,maxRange):
+	for i in range(minRange,maxRange+1):
 		outDict.merge(expandRangeOne(outDict))
+	#print("OutDict 2:  ",outDict)
 	for p in removeDict:
-		outDict.remove(p)
+		outDict.erase(p)
+	#print("OutDict 3:  ",outDict)
 	var outList = []
 	for p in outDict:
 		outList.append(p)
@@ -184,10 +187,10 @@ func targetSquishyAI(enemy):
 		if len(potentialRouteList) > speed or potentialRouteList == [null]:
 			targetQueue.remove_at(targetQueue.find(a))
 	if len(targetQueue) == 0:
-		print("No nearby targets")
+		#print("No nearby targets")
 		targetQueue = allies.duplicate()
 	targetQueue.sort_custom(compareDefenses)
-	print(targetQueue)
+	#print(targetQueue)
 	var adjTargets = getAdjacentEnemies(enemy,align.ENEMY,true)
 	if targetQueue[len(targetQueue)-1] in adjTargets:
 		adjTargets.pop_back().takeHit(enemy.getAttack(),true)

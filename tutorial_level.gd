@@ -93,10 +93,8 @@ func _input(event):
 					#IN BETWEEN PLAYER SELECTION AND THE MOVEMENT.
 					flipTile(tileSourceIDs.NONE,flippedTiles)
 					unit.position = centerOnTile(event.position)
-					var adjEnemiesList = $AI_Library.getAdjacentEnemies(unit,align.ALLY,false)
-					if len(adjEnemiesList) > 0:
-						flipTile(tileSourceIDs.ATTACK,adjEnemiesList)
-					else:
+					if not(highlightAttacks(unit)):
+						print("No attacking options")
 						unit.toggleSelect(false)
 						unit.toggleReady(false)
 						checkEndOfTurn()
@@ -104,14 +102,12 @@ func _input(event):
 					
 				#If there are attack options availible
 				elif unit.selected and $TileMap.get_cell_source_id(tileLayerIDs.OVERLAY,$TileMap.local_to_map(event.position)) == tileSourceIDs.ATTACK:
-					var adjEnemiesList = $AI_Library.getAdjacentEnemies(unit,align.ALLY,false)
-					flipTile(tileSourceIDs.NONE,adjEnemiesList)
+					flipTile(tileSourceIDs.NONE,flippedTiles)
 					for e in enemies:
 						if e.position == centerOnTile(event.position):
 							e.takeHit(unit.getAttack(),true)
 							crntUnitLabel.updateHealthBar(e.getHP(),e.getMaxHP())
 					unit.toggleSelect(false)
-					unit.toggleReady(false)
 					checkEndOfTurn()
 				#Selects the unit and highlights options
 				elif not(unit.selected) and $TileMap.local_to_map(event.position) == $TileMap.local_to_map(unit.position) and unit.isReady:
@@ -131,12 +127,22 @@ func _input(event):
 		get_tree().paused = false
 		exitMenu.queue_free()
 
+func highlightAttacks(crntUnit):
+	var options = $AI_Library.getTilesAtRange(crntUnit.position,crntUnit.getMinRange(),crntUnit.getMaxRange(),true,align.ALLY)
+	print(options)
+	if len(options) > 0:
+		flippedTiles = []
+		flippedTiles.resize(len(options))
+		for o in range(len(options)):
+			flippedTiles[o] = options[0].position
+		flipTile(tileSourceIDs.ATTACK,flippedTiles)
+		return true
+	return false
+		
 func deselectUnit():
 	if unit.selected:
 		unit.toggleSelect(false)
 		flipTile(tileSourceIDs.NONE,flippedTiles)
-		var adjEnemiesList = $AI_Library.getAdjacentEnemies(unit,align.ALLY,false)
-		flipTile(-1,adjEnemiesList)
 
 func getClickedUnit(pos):
 	var centeredPos = centerOnTile(pos)
@@ -211,9 +217,11 @@ func _process(delta):
 	$EndTurnButton.position = get_viewport_rect().size - $EndTurnButton.size
 
 func checkEndOfTurn():
+	#print("Checking end of turn")
 	var noRemainingMoves = true
 	for a in allies:
 		if a.isReady:
+			#print("Some move remains")
 			noRemainingMoves = false
 	if noRemainingMoves and unit.selected == false and len(enemies) > 0:
 		_on_end_turn_button_pressed()
