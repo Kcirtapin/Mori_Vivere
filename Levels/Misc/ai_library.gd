@@ -193,7 +193,7 @@ func targetSquishyAI(enemy):
 	#print(targetQueue)
 	var adjTargets = getAdjacentEnemies(enemy,align.ENEMY,true)
 	if targetQueue[len(targetQueue)-1] in adjTargets:
-		adjTargets.pop_back().takeHit(enemy.getAttack(),true)
+		targetQueue.pop_back().takeHit(enemy.getAttack(),true)
 	else:
 		move(getPathToGood(enemy.position, targetQueue.pop_back().position),enemy)
 		adjTargets = getAdjacentEnemies(enemy,align.ENEMY,true)
