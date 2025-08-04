@@ -70,7 +70,7 @@ func getAdjacentEnemies(unit, alignment, getUnits:bool):
 				
 	return adjEnemyList
 
-func getTilesAtRange(pos,minRange,maxRange,getUnits:bool,alignment):
+func getTilesAtRange(pos,minRange,maxRange,getUnits:bool,alignment=align.NEUTRAL):
 	var outDict = {pos:0}
 	for i in range(minRange-1):
 		outDict.merge(expandRangeOne(outDict))
@@ -108,6 +108,35 @@ func expandRangeOne(posDict:Dictionary):
 	return outDict
 
 func getPathToGood(startPos, endPos):
+	#var routeList = DEPQ.new()
+	#var MAX_MOVES = 15
+	#var routeNotFound = true
+	#var crntRoute = [startPos]
+	##The 0 in the usedTiles dictionary is a dummy value. usedTiles is essentially a set
+	#var usedTiles = {startPos:0}
+	#routeList.add(crntRoute,crntRoute.size())
+	#while routeNotFound and routeList.size() > 0:
+		#crntRoute = routeList.pop_min()
+		#var crntElevation = tileMap.get_cell_tile_data(0,tileMap.local_to_map(crntRoute[len(crntRoute)-1]),false).get_custom_data("elevation")
+		##print(crntRoute)
+		#if crntRoute[len(crntRoute)-1] == endPos:
+			#if not isOccupyable(crntRoute[len(crntRoute)-1], crntElevation):
+				#crntRoute.pop_back()
+			#if isOccupyable(crntRoute[len(crntRoute)-1], crntElevation):
+				#return crntRoute
+		#elif len(crntRoute) <= MAX_MOVES:
+			#var adjTiles = getAdjacentTiles(crntRoute[len(crntRoute)-1])
+			#for tile in adjTiles:
+				#if (tile not in usedTiles.keys() and isPassable(tile,align.ENEMY, crntElevation)) or tile == endPos:
+					#usedTiles[tile] = 0
+					#var newList = crntRoute.duplicate()
+					#for i in range(tileMap.get_cell_tile_data(0,tileMap.local_to_map(tile),false).get_custom_data("moveCost")):
+						#newList.push_back(tile)
+					#routeList.add(newList,newList.size())
+	#return [null]
+	return getPathToPosList(startPos, [endPos])
+
+func getPathToPosList(startPos, endPosList):
 	var routeList = DEPQ.new()
 	var MAX_MOVES = 15
 	var routeNotFound = true
@@ -119,7 +148,7 @@ func getPathToGood(startPos, endPos):
 		crntRoute = routeList.pop_min()
 		var crntElevation = tileMap.get_cell_tile_data(0,tileMap.local_to_map(crntRoute[len(crntRoute)-1]),false).get_custom_data("elevation")
 		#print(crntRoute)
-		if crntRoute[len(crntRoute)-1] == endPos:
+		if crntRoute[len(crntRoute)-1] in endPosList:
 			if not isOccupyable(crntRoute[len(crntRoute)-1], crntElevation):
 				crntRoute.pop_back()
 			if isOccupyable(crntRoute[len(crntRoute)-1], crntElevation):
@@ -127,7 +156,7 @@ func getPathToGood(startPos, endPos):
 		elif len(crntRoute) <= MAX_MOVES:
 			var adjTiles = getAdjacentTiles(crntRoute[len(crntRoute)-1])
 			for tile in adjTiles:
-				if (tile not in usedTiles.keys() and isPassable(tile,align.ENEMY, crntElevation)) or tile == endPos:
+				if (tile not in usedTiles.keys() and isPassable(tile,align.ENEMY, crntElevation)) or tile in endPosList:
 					usedTiles[tile] = 0
 					var newList = crntRoute.duplicate()
 					for i in range(tileMap.get_cell_tile_data(0,tileMap.local_to_map(tile),false).get_custom_data("moveCost")):
@@ -168,12 +197,6 @@ func basic_AI(enemy):
 			if (len(potentialRouteList) < len(targetList) and potentialRouteList != [null]) or targetList == []:
 				targetList = potentialRouteList
 		move(targetList,enemy)
-		#var speed = enemy.getSpeed()
-		#if len(targetList) > 1:
-			#targetList.pop_front()
-			#while speed >= 1 and len(targetList) > 0:
-				#enemy.position = targetList.pop_front()
-				#speed -= 1
 	var adjAllies = getAdjacentEnemies(enemy,align.ENEMY,true)
 	if len(adjAllies) > 0:
 		adjAllies[0].takeHit(enemy.getAttack(),true)
@@ -200,3 +223,23 @@ func targetSquishyAI(enemy):
 		if len(adjTargets) > 0:
 			adjTargets.sort_custom(compareDefenses)
 			adjTargets.pop_back().takeHit(enemy.getAttack(),true)
+
+func basicRangedAI(enemy):
+	var targetQueue:Array = allies.duplicate()
+	targetQueue.sort_custom(compareDefenses)
+	var validTarget = false
+	var shortestPath = [null]
+	while not(validTarget) and len(targetQueue) != 0:
+		var crntTarget = targetQueue.pop_back()
+		var targetTiles = getTilesAtRange(crntTarget.position,enemy.getMinRange(),enemy.getMaxRange(),false)
+		var targetPath = getPathToPosList(enemy.position,targetTiles)
+		if len(targetPath) <= enemy.getSpeed():
+			validTarget = true
+			#Need to fix getPath function to add last tile so that the unit actually moves to within range
+			move(targetPath,enemy)
+			crntTarget.takeHit(enemy.getAttack(),true)
+			return
+		if len(targetPath) < len(shortestPath) or shortestPath == [null]:
+			shortestPath = targetPath
+	if shortestPath != [null]:
+		move(shortestPath,enemy)

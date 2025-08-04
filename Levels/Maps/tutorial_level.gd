@@ -94,7 +94,7 @@ func _input(event):
 					flipTile(tileSourceIDs.NONE,flippedTiles)
 					unit.position = centerOnTile(event.position)
 					if not(highlightAttacks(unit)):
-						print("No attacking options")
+						#print("No attacking options")
 						unit.toggleSelect(false)
 						unit.toggleReady(false)
 						checkEndOfTurn()
@@ -129,7 +129,7 @@ func _input(event):
 
 func highlightAttacks(crntUnit):
 	var options = $AI_Library.getTilesAtRange(crntUnit.position,crntUnit.getMinRange(),crntUnit.getMaxRange(),true,align.ALLY)
-	print(options)
+	#print(options)
 	if len(options) > 0:
 		flippedTiles = []
 		flippedTiles.resize(len(options))
