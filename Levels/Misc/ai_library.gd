@@ -4,6 +4,7 @@ var allies
 var enemies
 var tileMap
 enum align {ALLY,ENEMY,NEUTRAL}
+enum tileLayerIDs {TERRAIN=0,EFFECTS=1,MOUSE=2,OVERLAY=3}
 
 
 #Must be initialized with a list of enemies, allies, and a tilemap. "Ally" and "enemy" are from the player's perspective
@@ -159,8 +160,12 @@ func getPathToPosList(startPos, endPosList):
 				if (tile not in usedTiles.keys() and isPassable(tile,align.ENEMY, crntElevation)) or tile in endPosList:
 					usedTiles[tile] = 0
 					var newList = crntRoute.duplicate()
-					for i in range(tileMap.get_cell_tile_data(0,tileMap.local_to_map(tile),false).get_custom_data("moveCost")):
-						newList.push_back(tile)
+					if tileMap.get_cell_tile_data(tileLayerIDs.EFFECTS,tileMap.local_to_map(tile)) == null:
+						for i in range(tileMap.get_cell_tile_data(tileLayerIDs.TERRAIN,tileMap.local_to_map(tile)).get_custom_data("moveCost")):
+							newList.push_back(tile)
+					else:
+						for i in range(tileMap.get_cell_tile_data(tileLayerIDs.TERRAIN,tileMap.local_to_map(tile)).get_custom_data("moveCost")+tileMap.get_cell_tile_data(tileLayerIDs.EFFECTS,tileMap.local_to_map(tile)).get_custom_data("moveCost")):
+							newList.push_back(tile)
 					routeList.add(newList,newList.size())
 	return [null]
 

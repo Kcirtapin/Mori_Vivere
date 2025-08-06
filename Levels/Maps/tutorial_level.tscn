@@ -1,4 +1,4 @@
-[gd_scene load_steps=27 format=3 uid="uid://hkxvfkcdc7tf"]
+[gd_scene load_steps=31 format=3 uid="uid://hkxvfkcdc7tf"]
 
 [ext_resource type="Script" path="res://Levels/Maps/tutorial_level.gd" id="1_4lexe"]
 [ext_resource type="Texture2D" uid="uid://daicu1k8y15io" path="res://art/Placeholder_Tilemap.png" id="1_h5cw8"]
@@ -16,7 +16,9 @@
 [ext_resource type="Texture2D" uid="uid://b8ae0qbkep0ny" path="res://art/RoughTerrain.png" id="9_cmu83"]
 [ext_resource type="Texture2D" uid="uid://dnlo01x37cva" path="res://art/PlaceHolderTileElevationChange.png" id="11_4t87c"]
 [ext_resource type="Texture2D" uid="uid://bgctqvtexcx3e" path="res://art/HexTempOverlay_MouseHover.png" id="12_48pda"]
+[ext_resource type="Texture2D" uid="uid://0dto7yrkx5ka" path="res://art/Placeholder_Fire.png" id="17_neex0"]
 [ext_resource type="PackedScene" uid="uid://b5jy2lwhx67si" path="res://Levels/Misc/ai_library.tscn" id="17_xnqpg"]
+[ext_resource type="Texture2D" uid="uid://cbbvkh33lmgne" path="res://art/Placeholder_Corpse.png" id="18_u2peb"]
 
 [sub_resource type="TileSetAtlasSource" id="TileSetAtlasSource_3l3iv"]
 texture = ExtResource("3_86dit")
@@ -102,6 +104,25 @@ texture_region_size = Vector2i(64, 64)
 0:0/0/physics_layer_0/linear_velocity = Vector2(0, 0)
 0:0/0/physics_layer_0/angular_velocity = 0.0
 
+[sub_resource type="TileSetAtlasSource" id="TileSetAtlasSource_ikgtj"]
+texture = ExtResource("17_neex0")
+texture_region_size = Vector2i(64, 64)
+0:0/0 = 0
+0:0/0/physics_layer_0/linear_velocity = Vector2(0, 0)
+0:0/0/physics_layer_0/angular_velocity = 0.0
+0:0/0/custom_data_0 = true
+0:0/0/custom_data_3 = "Fire"
+
+[sub_resource type="TileSetAtlasSource" id="TileSetAtlasSource_7fin7"]
+texture = ExtResource("18_u2peb")
+texture_region_size = Vector2i(64, 64)
+0:0/0 = 0
+0:0/0/physics_layer_0/linear_velocity = Vector2(0, 0)
+0:0/0/physics_layer_0/angular_velocity = 0.0
+0:0/0/custom_data_0 = true
+0:0/0/custom_data_1 = 1
+0:0/0/custom_data_3 = "Corpse"
+
 [sub_resource type="TileSet" id="TileSet_0t5q3"]
 tile_shape = 3
 tile_offset_axis = 1
@@ -122,6 +143,8 @@ sources/2 = SubResource("TileSetAtlasSource_ikwno")
 sources/4 = SubResource("TileSetAtlasSource_u7ujc")
 sources/5 = SubResource("TileSetAtlasSource_djusc")
 sources/6 = SubResource("TileSetAtlasSource_0xjfs")
+sources/7 = SubResource("TileSetAtlasSource_ikgtj")
+sources/8 = SubResource("TileSetAtlasSource_7fin7")
 
 [sub_resource type="LabelSettings" id="LabelSettings_38u4x"]
 font_size = 48

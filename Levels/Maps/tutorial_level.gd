@@ -19,8 +19,8 @@ var enemies = []
 var allies = []
 
 enum align {ALLY,ENEMY,NEUTRAL}
-enum tileSourceIDs {NONE=-1,NORMAL=0,BLOCKER=1,ATTACK=2,MOVEMENT=3,ROUGH=4,MOUSE=6}
-enum tileLayerIDs {TERRAIN=0,MOUSE=1,OVERLAY=2}
+enum tileSourceIDs {NONE=-1,NORMAL=0,BLOCKER=1,ATTACK=2,MOVEMENT=3,ROUGH=4,MOUSE=6,FIRE=7,CORPSE=8}
+enum tileLayerIDs {TERRAIN=0,EFFECTS=1,MOUSE=2,OVERLAY=3}
 
 var flippedTiles = []
 var prevMouseOverlay = null
@@ -32,6 +32,7 @@ var crntUnitLabel = null
 # Called when the node enters the scene tree for the first time.
 func _ready():
 	$AI_Library.initialize(allies,enemies,$TileMap)
+	$TileMap.add_layer(tileLayerIDs.EFFECTS)
 	$TileMap.add_layer(tileLayerIDs.MOUSE)
 	$TileMap.add_layer(tileLayerIDs.OVERLAY)
 	
@@ -189,9 +190,13 @@ func validGroundMovementsRec(startPos:Vector2, speed:int, validTarget:bool, alig
 		return tileList
 	else:
 		var adjTileList = getAdjacentTiles(startPos)
-		var crntElevation = $TileMap.get_cell_tile_data(tileLayerIDs.TERRAIN,$TileMap.local_to_map(startPos),false).get_custom_data("elevation")
+		var crntElevation = $TileMap.get_cell_tile_data(tileLayerIDs.TERRAIN,$TileMap.local_to_map(startPos)).get_custom_data("elevation")
 		for tile in adjTileList:
-			var cost = $TileMap.get_cell_tile_data(tileLayerIDs.TERRAIN,$TileMap.local_to_map(tile),false).get_custom_data("moveCost")
+			var cost = 0
+			if $TileMap.get_cell_tile_data(tileLayerIDs.EFFECTS,$TileMap.local_to_map(tile)) == null:
+				cost = $TileMap.get_cell_tile_data(tileLayerIDs.TERRAIN,$TileMap.local_to_map(tile)).get_custom_data("moveCost")
+			else:
+				cost = $TileMap.get_cell_tile_data(tileLayerIDs.TERRAIN,$TileMap.local_to_map(tile)).get_custom_data("moveCost") + $TileMap.get_cell_tile_data(tileLayerIDs.EFFECTS,$TileMap.local_to_map(tile)).get_custom_data("moveCost")
 			if $AI_Library.isPassable(tile,align.NEUTRAL, crntElevation) and speed - cost >= 0:
 				validGroundMovementsRec(tile, speed-cost, true, alignment, tileList)
 			elif $AI_Library.isPassable(tile,alignment, crntElevation) and speed - cost >= 0:
@@ -262,6 +267,7 @@ func removeEnemy(enemy):
 		if enemies[i] == enemy:
 			indOfRemoval = i
 	if indOfRemoval != -1:
+		$TileMap.set_cell(tileLayerIDs.EFFECTS,$TileMap.local_to_map(enemies[indOfRemoval].position),tileSourceIDs.CORPSE,Vector2i.ZERO)
 		enemies.remove_at(indOfRemoval)
 		checkEndOfGame()
 
@@ -271,6 +277,7 @@ func removeAlly(ally):
 		if allies[i] == ally:
 			indOfRemoval = i
 	if indOfRemoval != -1:
+		$TileMap.set_cell(tileLayerIDs.EFFECTS,$TileMap.local_to_map(allies[indOfRemoval].position),tileSourceIDs.CORPSE,Vector2i.ZERO)
 		allies.remove_at(indOfRemoval)
 		checkEndOfGame()
 
