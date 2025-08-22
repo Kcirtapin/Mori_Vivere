@@ -24,3 +24,4 @@ func initialize(tile:TileData):
 
 func delete():
 	queue_free()
+

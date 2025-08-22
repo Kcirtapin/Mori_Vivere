@@ -25,12 +25,18 @@ enum tileLayerIDs {TERRAIN=0,EFFECTS=1,MOUSE=2,OVERLAY=3}
 var flippedTiles = []
 var prevMouseOverlay = null
 
+var eventPosition = Vector2.ZERO
 
 var crntTerrainLabel = null
 var crntUnitLabel = null
 
+var panButtonsPressed = {"right":false,"left":false,"up":false,"down":false}
+var PAN_VELOCITY = 300
+var screenPanVelocity = Vector2.ZERO
+
 # Called when the node enters the scene tree for the first time.
 func _ready():
+	$EndTurnButton.position = screenToLocal(get_viewport_rect().size - $EndTurnButton.size)
 	$AI_Library.initialize(allies,enemies,$TileMap)
 	$TileMap.add_layer(tileLayerIDs.EFFECTS)
 	$TileMap.add_layer(tileLayerIDs.MOUSE)
@@ -55,29 +61,38 @@ func _ready():
 		add_child(enemies[e])
 
 func _input(event):
+	if not(event is InputEventKey):
+		#print(eventPosition)
+		eventPosition = screenToLocal(event.position)
+	
+	if not(menuEnabled):
+		if event.is_action_pressed("panRight"):
+			panButtonsPressed["right"] = true
+			screenPanVelocity.x -= PAN_VELOCITY
+		elif event.is_action_released("panRight") and panButtonsPressed.get("right"):
+			panButtonsPressed["right"] = false
+			screenPanVelocity.x += PAN_VELOCITY
+		elif event.is_action_pressed("panLeft"):
+			panButtonsPressed["left"] = true
+			screenPanVelocity.x += PAN_VELOCITY
+		elif event.is_action_released("panLeft") and panButtonsPressed.get("left"):
+			panButtonsPressed["left"] = false
+			screenPanVelocity.x -= PAN_VELOCITY
+		elif event.is_action_pressed("panUp"):
+			panButtonsPressed["up"] = true
+			screenPanVelocity.y -= PAN_VELOCITY
+		elif event.is_action_released("panUp") and panButtonsPressed.get("up"):
+			panButtonsPressed["up"] = false
+			screenPanVelocity.y += PAN_VELOCITY
+		elif event.is_action_pressed("panDown"):
+			panButtonsPressed["down"] = true
+			screenPanVelocity.y += PAN_VELOCITY
+		elif event.is_action_released("panDown") and panButtonsPressed.get("down"):
+			panButtonsPressed["down"] = false
+			screenPanVelocity.y -= PAN_VELOCITY
+	
 	if event is InputEventMouseMotion and playerTurn and not(menuEnabled):
-		var newLabelNeeded = false
-		if prevMouseOverlay != null and prevMouseOverlay != $TileMap.local_to_map(event.position):
-			$TileMap.erase_cell(tileLayerIDs.MOUSE,prevMouseOverlay)
-			newLabelNeeded = true
-		prevMouseOverlay = $TileMap.local_to_map(event.position)
-		$TileMap.set_cell(tileLayerIDs.MOUSE,prevMouseOverlay,tileSourceIDs.MOUSE,Vector2i.ZERO)
-		var terrainTile = $TileMap.get_cell_tile_data(tileLayerIDs.TERRAIN,prevMouseOverlay)
-		if terrainTile != null and newLabelNeeded:
-			if crntTerrainLabel != null:
-				crntTerrainLabel.delete()
-				if crntUnitLabel != null:
-					crntUnitLabel.delete()
-			crntTerrainLabel = terrain_label.instantiate()
-			add_child(crntTerrainLabel)
-			crntTerrainLabel.initialize(terrainTile)
-			crntTerrainLabel.position = Vector2.ZERO
-			var hoveredUnit = getUnitAt(event.position)
-			if hoveredUnit != null:
-				crntUnitLabel = unit_label.instantiate()
-				add_child(crntUnitLabel)
-				crntUnitLabel.initialize(hoveredUnit.getName(),hoveredUnit.getHP(),hoveredUnit.getMaxHP())
-				crntUnitLabel.position = Vector2(crntTerrainLabel.size.x*1.2,0)
+		moveMouseOverlayTile()
 
 	if event is InputEventMouseButton and playerTurn and not(menuEnabled):
 		if event.button_index == MOUSE_BUTTON_RIGHT and event.pressed and unit != null:
@@ -85,15 +100,15 @@ func _input(event):
 		if event.button_index == MOUSE_BUTTON_LEFT and event.pressed:
 			#Checks if the click was on a unit
 			if unit == null or not(unit.selected):
-				unit = getClickedUnit(event.position)
+				unit = getClickedUnit(eventPosition)
 			#If a unit was clicked or is already selected
 			if unit != null:
 				#Moves the unit to the clicked location
-				if unit.selected and $TileMap.get_cell_source_id(tileLayerIDs.OVERLAY,$TileMap.local_to_map(event.position)) == tileSourceIDs.MOVEMENT:
+				if unit.selected and $TileMap.get_cell_source_id(tileLayerIDs.OVERLAY,$TileMap.local_to_map(eventPosition)) == tileSourceIDs.MOVEMENT:
 					#THIS WILL CAUSE A BUG IF ANYTHING HAPPENS TO PLAYER POSITION OR SPEED
 					#IN BETWEEN PLAYER SELECTION AND THE MOVEMENT.
 					flipTile(tileSourceIDs.NONE,flippedTiles)
-					unit.position = centerOnTile(event.position)
+					unit.position = centerOnTile(eventPosition)
 					if not(highlightAttacks(unit)):
 						#print("No attacking options")
 						unit.toggleSelect(false)
@@ -102,16 +117,16 @@ func _input(event):
 					unit.toggleReady(false)
 					
 				#If there are attack options availible
-				elif unit.selected and $TileMap.get_cell_source_id(tileLayerIDs.OVERLAY,$TileMap.local_to_map(event.position)) == tileSourceIDs.ATTACK:
+				elif unit.selected and $TileMap.get_cell_source_id(tileLayerIDs.OVERLAY,$TileMap.local_to_map(eventPosition)) == tileSourceIDs.ATTACK:
 					flipTile(tileSourceIDs.NONE,flippedTiles)
 					for e in enemies:
-						if e.position == centerOnTile(event.position):
+						if e.position == centerOnTile(eventPosition):
 							e.takeHit(unit.getAttack(),true)
 							crntUnitLabel.updateHealthBar(e.getHP(),e.getMaxHP())
 					unit.toggleSelect(false)
 					checkEndOfTurn()
 				#Selects the unit and highlights options
-				elif not(unit.selected) and $TileMap.local_to_map(event.position) == $TileMap.local_to_map(unit.position) and unit.isReady:
+				elif not(unit.selected) and $TileMap.local_to_map(eventPosition) == $TileMap.local_to_map(unit.position) and unit.isReady:
 					unit.toggleSelect(true)
 					flippedTiles = validGroundMovements(centerOnTile(unit.position),unit.getSpeed(),align.ALLY)
 					flipTile(tileSourceIDs.MOVEMENT,flippedTiles)
@@ -119,14 +134,42 @@ func _input(event):
 	if event.is_action_pressed("pauseMenu") and not(menuEnabled):
 		exitMenu = Menu.instantiate()
 		add_child(exitMenu)
-		exitMenu.position = Vector2(get_viewport_rect().size/2)
+		exitMenu.position = screenToLocal(Vector2(get_viewport_rect().size/2))
 		menuEnabled = true
+		screenPanVelocity = Vector2.ZERO
+		panButtonsPressed = {"right":false,"left":false,"up":false,"down":false}
 		get_tree().paused = true
 	#Closes pause menu
 	elif event.is_action_pressed("pauseMenu") and menuEnabled:
 		menuEnabled = false
 		get_tree().paused = false
 		exitMenu.queue_free()
+
+func moveMouseOverlayTile():
+	var newLabelNeeded = false
+	var mousePos = screenToLocal(get_viewport().get_mouse_position())
+	if prevMouseOverlay != null and prevMouseOverlay != $TileMap.local_to_map(mousePos):
+		$TileMap.erase_cell(tileLayerIDs.MOUSE,prevMouseOverlay)
+		newLabelNeeded = true
+	prevMouseOverlay = $TileMap.local_to_map(mousePos)
+	$TileMap.set_cell(tileLayerIDs.MOUSE,prevMouseOverlay,tileSourceIDs.MOUSE,Vector2i.ZERO)
+	var terrainTile = $TileMap.get_cell_tile_data(tileLayerIDs.TERRAIN,prevMouseOverlay)
+	if crntTerrainLabel != null and newLabelNeeded:
+			crntTerrainLabel.delete()
+			if crntUnitLabel != null:
+				crntUnitLabel.delete()
+	if terrainTile != null and newLabelNeeded:
+		crntTerrainLabel = terrain_label.instantiate()
+		add_child(crntTerrainLabel)
+		crntTerrainLabel.initialize(terrainTile)
+		crntTerrainLabel.position = screenToLocal(Vector2.ZERO)
+		var hoveredUnit = getUnitAt(mousePos)
+		if hoveredUnit != null:
+			crntUnitLabel = unit_label.instantiate()
+			add_child(crntUnitLabel)
+			crntUnitLabel.initialize(hoveredUnit.getName(),hoveredUnit.getHP(),hoveredUnit.getMaxHP())
+			crntUnitLabel.position = screenToLocal(Vector2(crntTerrainLabel.size.x*1.2,0))
+
 
 func highlightAttacks(crntUnit):
 	var options = $AI_Library.getTilesAtRange(crntUnit.position,crntUnit.getMinRange(),crntUnit.getMaxRange(),true,align.ALLY)
@@ -139,7 +182,10 @@ func highlightAttacks(crntUnit):
 		flipTile(tileSourceIDs.ATTACK,flippedTiles)
 		return true
 	return false
-		
+
+func screenToLocal(pos:Vector2):
+	return get_viewport().get_screen_transform().affine_inverse() * get_global_transform_with_canvas().affine_inverse() * pos
+
 func deselectUnit():
 	if unit.selected:
 		unit.toggleSelect(false)
@@ -219,7 +265,15 @@ func _process(delta):
 	if menuEnabled and not(has_node("Menu")):
 		menuEnabled = false
 		get_tree().paused = false
-	$EndTurnButton.position = get_viewport_rect().size - $EndTurnButton.size
+	
+	if screenPanVelocity != Vector2.ZERO:
+		self.translate(screenPanVelocity*delta)
+		moveMouseOverlayTile()
+		$EndTurnButton.position = screenToLocal(get_viewport_rect().size - $EndTurnButton.size)
+		if crntTerrainLabel != null:
+			crntTerrainLabel.position = screenToLocal(Vector2.ZERO)
+			if crntUnitLabel != null:
+				crntUnitLabel.position = screenToLocal(Vector2(crntTerrainLabel.size.x*1.2,0))
 
 func checkEndOfTurn():
 	#print("Checking end of turn")
