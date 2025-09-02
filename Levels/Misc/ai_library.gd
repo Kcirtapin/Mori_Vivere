@@ -109,32 +109,6 @@ func expandRangeOne(posDict:Dictionary):
 	return outDict
 
 func getPathToGood(startPos, endPos):
-	#var routeList = DEPQ.new()
-	#var MAX_MOVES = 15
-	#var routeNotFound = true
-	#var crntRoute = [startPos]
-	##The 0 in the usedTiles dictionary is a dummy value. usedTiles is essentially a set
-	#var usedTiles = {startPos:0}
-	#routeList.add(crntRoute,crntRoute.size())
-	#while routeNotFound and routeList.size() > 0:
-		#crntRoute = routeList.pop_min()
-		#var crntElevation = tileMap.get_cell_tile_data(0,tileMap.local_to_map(crntRoute[len(crntRoute)-1]),false).get_custom_data("elevation")
-		##print(crntRoute)
-		#if crntRoute[len(crntRoute)-1] == endPos:
-			#if not isOccupyable(crntRoute[len(crntRoute)-1], crntElevation):
-				#crntRoute.pop_back()
-			#if isOccupyable(crntRoute[len(crntRoute)-1], crntElevation):
-				#return crntRoute
-		#elif len(crntRoute) <= MAX_MOVES:
-			#var adjTiles = getAdjacentTiles(crntRoute[len(crntRoute)-1])
-			#for tile in adjTiles:
-				#if (tile not in usedTiles.keys() and isPassable(tile,align.ENEMY, crntElevation)) or tile == endPos:
-					#usedTiles[tile] = 0
-					#var newList = crntRoute.duplicate()
-					#for i in range(tileMap.get_cell_tile_data(0,tileMap.local_to_map(tile),false).get_custom_data("moveCost")):
-						#newList.push_back(tile)
-					#routeList.add(newList,newList.size())
-	#return [null]
 	return getPathToPosList(startPos, [endPos])
 
 func getPathToPosList(startPos, endPosList):
@@ -150,7 +124,7 @@ func getPathToPosList(startPos, endPosList):
 		var crntElevation = tileMap.get_cell_tile_data(0,tileMap.local_to_map(crntRoute[len(crntRoute)-1]),false).get_custom_data("elevation")
 		#print(crntRoute)
 		if crntRoute[len(crntRoute)-1] in endPosList:
-			if not isOccupyable(crntRoute[len(crntRoute)-1], crntElevation):
+			while not(isOccupyable(crntRoute[len(crntRoute)-1], crntElevation)) and len(crntRoute) > 1:
 				crntRoute.pop_back()
 			if isOccupyable(crntRoute[len(crntRoute)-1], crntElevation):
 				return crntRoute
@@ -196,11 +170,13 @@ func move(path, entity):
 # Note - no ML used. It's all algorithms
 func basic_AI(enemy):
 	if len(getAdjacentEnemies(enemy,align.ENEMY,true)) == 0:
-		var targetList = getPathToGood(enemy.position,allies[0].position)
+		print("No adjacent enemies")
+		var targetList = [null]
 		for a in allies:
 			var potentialRouteList = getPathToGood(enemy.position,a.position)
-			if (len(potentialRouteList) < len(targetList) and potentialRouteList != [null]) or targetList == []:
+			if (len(potentialRouteList) < len(targetList) and potentialRouteList != [null]) or targetList == [null]:
 				targetList = potentialRouteList
+		#print("moving: ",targetList)
 		move(targetList,enemy)
 	var adjAllies = getAdjacentEnemies(enemy,align.ENEMY,true)
 	if len(adjAllies) > 0:
