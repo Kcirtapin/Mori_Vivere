@@ -16,7 +16,10 @@ func _ready():
 func takeHit(dmg:int, isBlockable:bool):
 	$Unit.takeHit(dmg,isBlockable)
 	checkDeath()
-	
+
+func attack(opponent):
+	opponent.takeHit(getAttack(),true)
+	return []
 
 func checkDeath():
 	if not(self.has_node("Unit")):

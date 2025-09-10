@@ -53,6 +53,10 @@ func resetDefense():
 func takeHit(dmg:int, isBlockable:bool):
 	$Unit.takeHit(dmg,isBlockable)
 
+func attack(opponent):
+	opponent.takeHit(getAttack(),true)
+	return []
+
 func toggleSelect(sel:bool):
 	selected = sel
 	if selected:

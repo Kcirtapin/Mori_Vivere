@@ -1,4 +1,4 @@
-[gd_scene load_steps=31 format=3 uid="uid://hkxvfkcdc7tf"]
+[gd_scene load_steps=32 format=3 uid="uid://hkxvfkcdc7tf"]
 
 [ext_resource type="Script" path="res://Levels/Maps/tutorial_level.gd" id="1_4lexe"]
 [ext_resource type="Texture2D" uid="uid://daicu1k8y15io" path="res://art/Placeholder_Tilemap.png" id="1_h5cw8"]
@@ -9,6 +9,7 @@
 [ext_resource type="PackedScene" uid="uid://mx0jlowtfb4r" path="res://Units/Enemies/tanky_enemy.tscn" id="5_h7tq3"]
 [ext_resource type="Texture2D" uid="uid://doa0hukt3kbgy" path="res://art/Copy of HexTempOverlay.png" id="5_i6ohi"]
 [ext_resource type="PackedScene" uid="uid://dv0fve2vq6300" path="res://Levels/Misc/victory_screen.tscn" id="6_eel1b"]
+[ext_resource type="PackedScene" uid="uid://be8u42gxqfq2x" path="res://Units/Enemies/enemy_mage.tscn" id="6_wo7j4"]
 [ext_resource type="PackedScene" uid="uid://b7d47vvnwgeh1" path="res://Levels/Misc/unit_label.tscn" id="7_adbun"]
 [ext_resource type="PackedScene" uid="uid://bawkcttrd5c0d" path="res://Levels/Misc/terrain_label.tscn" id="7_i4agb"]
 [ext_resource type="Texture2D" uid="uid://dnc7kqxxjdpcj" path="res://art/HexTempOverlay_Attacking.png" id="7_qqkv1"]
@@ -112,6 +113,7 @@ texture_region_size = Vector2i(64, 64)
 0:0/0/physics_layer_0/angular_velocity = 0.0
 0:0/0/custom_data_0 = true
 0:0/0/custom_data_3 = "Fire"
+0:0/0/custom_data_4 = 2
 
 [sub_resource type="TileSetAtlasSource" id="TileSetAtlasSource_7fin7"]
 texture = ExtResource("18_u2peb")
@@ -136,6 +138,8 @@ custom_data_layer_2/name = "elevation"
 custom_data_layer_2/type = 2
 custom_data_layer_3/name = "name"
 custom_data_layer_3/type = 4
+custom_data_layer_4/name = "damage"
+custom_data_layer_4/type = 2
 sources/1 = SubResource("TileSetAtlasSource_5x0re")
 sources/0 = SubResource("TileSetAtlasSource_3l3iv")
 sources/3 = SubResource("TileSetAtlasSource_fq3id")
@@ -156,6 +160,7 @@ Menu = ExtResource("2_ftwfe")
 allied_unit = ExtResource("3_4tne1")
 enemy_unit = ExtResource("4_0g6cc")
 tanky_enemy = ExtResource("5_h7tq3")
+enemy_mage = ExtResource("6_wo7j4")
 victory_msg = ExtResource("6_eel1b")
 terrain_label = ExtResource("7_i4agb")
 unit_label = ExtResource("7_adbun")

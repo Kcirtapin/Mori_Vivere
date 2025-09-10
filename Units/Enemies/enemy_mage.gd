@@ -1,25 +1,26 @@
 extends Area2D
 
-var AI_TYPE = "weakest"
+var AI_TYPE = "ranged"
+var FIRE_ID = 7
 
 # Called when the node enters the scene tree for the first time.
 func _ready():
-	var MAXHP = 15
-	var SPEED = 2
-	var ATTACK = 2
-	var DEFENSE = 5
-	var NAME = "Tank"
-	var MIN_RANGE = 1
-	var MAX_RANGE = 1
+	var MAXHP = 6
+	var SPEED = 4
+	var ATTACK = 8
+	var DEFENSE = 0
+	var NAME = "Mage"
+	var MIN_RANGE = 2
+	var MAX_RANGE = 3
 	$Unit.initialize(NAME,MAXHP,SPEED,ATTACK,DEFENSE,MIN_RANGE,MAX_RANGE)
 
 func takeHit(dmg:int, isBlockable:bool):
 	$Unit.takeHit(dmg,isBlockable)
 	checkDeath()
-	
+
 func attack(opponent):
 	opponent.takeHit(getAttack(),true)
-	return []
+	return [[opponent.position,FIRE_ID]]
 
 func checkDeath():
 	if not(self.has_node("Unit")):

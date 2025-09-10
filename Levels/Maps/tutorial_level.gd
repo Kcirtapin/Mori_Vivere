@@ -8,6 +8,7 @@ var exitMenu
 @export var allied_unit: PackedScene
 @export var enemy_unit: PackedScene
 @export var tanky_enemy: PackedScene
+@export var enemy_mage: PackedScene
 @export var victory_msg: PackedScene
 @export var terrain_label: PackedScene
 @export var unit_label: PackedScene
@@ -42,6 +43,8 @@ func _ready():
 	$TileMap.add_layer(tileLayerIDs.MOUSE)
 	$TileMap.add_layer(tileLayerIDs.OVERLAY)
 	
+	#$TileMap.set_cell(tileLayerIDs.EFFECTS, Vector2i(7,7), tileSourceIDs.FIRE, Vector2i.ZERO)
+	
 	var alliedSpawnCoords = [[Vector2(4,3),"reg"],[Vector2(4,5),"ranged"],[Vector2(4,7),"reg"],[Vector2(6,8),"reg"],[Vector2(6,5),"reg"]]
 	for a in range(len(alliedSpawnCoords)):
 		if alliedSpawnCoords[a][1] == "reg":
@@ -51,12 +54,14 @@ func _ready():
 		allies[a].position = $TileMap.map_to_local(alliedSpawnCoords[a][0])
 		add_child(allies[a])
 		
-	var enemySpawnCoords = [[Vector2(12,6),"reg"], [Vector2(12,8),"reg"], [Vector2(14,2),"reg"], [Vector2(20,7),"reg"], [Vector2(21,1),"tank"]]
+	var enemySpawnCoords = [[Vector2(12,6),"reg"], [Vector2(12,8),"reg"], [Vector2(14,2),"reg"], [Vector2(20,7),"reg"], [Vector2(21,1),"tank"], [Vector2(12,5), "mage"]]
 	for e in range(len(enemySpawnCoords)):
 		if enemySpawnCoords[e][1] == "reg":
 			enemies.append(enemy_unit.instantiate())
 		elif enemySpawnCoords[e][1] == "tank":
 			enemies.append(tanky_enemy.instantiate())
+		elif enemySpawnCoords[e][1] == "mage":
+			enemies.append(enemy_mage.instantiate())
 		enemies[e].position = $TileMap.map_to_local(enemySpawnCoords[e][0])
 		add_child(enemies[e])
 
@@ -260,6 +265,14 @@ func getAdjacentTiles(pos:Vector2):
 	var downLeftHex = centerOnTile(pos + Vector2(-1 * tileDiagonalSize, tileDiagonalSize))
 	return [upHex,upRightHex,downRightHex,downHex,downLeftHex,upLeftHex]
 
+func dealDamageFromTile(unit):
+	var damage:int
+	if $TileMap.get_cell_tile_data(tileLayerIDs.EFFECTS,$TileMap.local_to_map(unit.position)) == null:
+		damage = $TileMap.get_cell_tile_data(tileLayerIDs.TERRAIN,$TileMap.local_to_map(unit.position)).get_custom_data("damage")
+	else:
+		damage = $TileMap.get_cell_tile_data(tileLayerIDs.TERRAIN,$TileMap.local_to_map(unit.position)).get_custom_data("damage") + $TileMap.get_cell_tile_data(tileLayerIDs.EFFECTS,$TileMap.local_to_map(unit.position)).get_custom_data("damage")
+	unit.takeHit(damage,false)
+
 # Called every frame. 'delta' is the elapsed time since the previous frame.
 func _process(delta):
 	if menuEnabled and not(has_node("Menu")):
@@ -305,6 +318,7 @@ func _on_enemy_turn_label_timer_timeout():
 	$EnemyTurnLabel.hide()
 	$EnemyTurnLabelTimer.stop()
 	for a in allies:
+		dealDamageFromTile(a)
 		a.resetDefense()
 		a.toggleReady(true)
 	$EndTurnButton.disabled = false
@@ -314,6 +328,8 @@ func doEnemyTurn(enemy):
 		$AI_Library.basic_AI(enemy)
 	elif enemy.getAiType() == "weakest":
 		$AI_Library.targetSquishyAI(enemy)
+	elif  enemy.getAiType() == "ranged":
+		$AI_Library.basicRangedAI(enemy)
 
 func removeEnemy(enemy):
 	var indOfRemoval = -1
@@ -343,6 +359,7 @@ func _on_end_turn_button_pressed():
 	$TileMap.add_layer(tileLayerIDs.OVERLAY)
 	
 	for e in enemies:
+		dealDamageFromTile(e)
 		e.resetDefense()
 	playerTurn = false
 	$EndTurnButton.disabled = true

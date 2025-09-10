@@ -2,8 +2,11 @@ extends Node2D
 
 var allies
 var enemies
-var tileMap
+var tileMap:TileMap
+
+
 enum align {ALLY,ENEMY,NEUTRAL}
+enum tileSourceIDs {NONE=-1,NORMAL=0,BLOCKER=1,ATTACK=2,MOVEMENT=3,ROUGH=4,MOUSE=6,FIRE=7,CORPSE=8}
 enum tileLayerIDs {TERRAIN=0,EFFECTS=1,MOUSE=2,OVERLAY=3}
 
 
@@ -166,11 +169,14 @@ func move(path, entity):
 		while speed >= 1 and len(path) > 0:
 			entity.position = path.pop_front()
 			speed -= 1
-## AI models ##
+
+func addEffect(pos:Vector2i, effect:int):
+	tileMap.set_cell(tileLayerIDs.EFFECTS, tileMap.local_to_map(pos), effect, Vector2i.ZERO)
+## AI modes ##
 # Note - no ML used. It's all algorithms
 func basic_AI(enemy):
 	if len(getAdjacentEnemies(enemy,align.ENEMY,true)) == 0:
-		print("No adjacent enemies")
+		#print("No adjacent enemies")
 		var targetList = [null]
 		for a in allies:
 			var potentialRouteList = getPathToGood(enemy.position,a.position)
@@ -180,7 +186,9 @@ func basic_AI(enemy):
 		move(targetList,enemy)
 	var adjAllies = getAdjacentEnemies(enemy,align.ENEMY,true)
 	if len(adjAllies) > 0:
-		adjAllies[0].takeHit(enemy.getAttack(),true)
+		var effects = enemy.attack(adjAllies[0])
+		for e in effects:
+			addEffect(e[0],e[1])
 
 #Moves towards closest unit. If there are multiple units in attacking range, attack the one with the lowest defense
 func targetSquishyAI(enemy):
@@ -197,13 +205,17 @@ func targetSquishyAI(enemy):
 	#print(targetQueue)
 	var adjTargets = getAdjacentEnemies(enemy,align.ENEMY,true)
 	if targetQueue[len(targetQueue)-1] in adjTargets:
-		targetQueue.pop_back().takeHit(enemy.getAttack(),true)
+		var effects = enemy.attack(targetQueue.pop_back())
+		for e in effects:
+			addEffect(e[0],e[1])
 	else:
 		move(getPathToGood(enemy.position, targetQueue.pop_back().position),enemy)
 		adjTargets = getAdjacentEnemies(enemy,align.ENEMY,true)
 		if len(adjTargets) > 0:
 			adjTargets.sort_custom(compareDefenses)
-			adjTargets.pop_back().takeHit(enemy.getAttack(),true)
+			var effects = enemy.attack(adjTargets.pop_back())
+			for e in effects:
+				addEffect(e[0],e[1])
 
 func basicRangedAI(enemy):
 	var targetQueue:Array = allies.duplicate()
@@ -218,7 +230,9 @@ func basicRangedAI(enemy):
 			validTarget = true
 			#Need to fix getPath function to add last tile so that the unit actually moves to within range
 			move(targetPath,enemy)
-			crntTarget.takeHit(enemy.getAttack(),true)
+			var effects = enemy.attack(crntTarget)
+			for e in effects:
+				addEffect(e[0],e[1])
 			return
 		if len(targetPath) < len(shortestPath) or shortestPath == [null]:
 			shortestPath = targetPath

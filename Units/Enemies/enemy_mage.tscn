@@ -1,0 +1,31 @@
+[gd_scene load_steps=6 format=3 uid="uid://be8u42gxqfq2x"]
+
+[ext_resource type="Script" path="res://Units/Enemies/enemy_mage.gd" id="1_8h4m5"]
+[ext_resource type="PackedScene" uid="uid://cc17p0bj20v1f" path="res://Units/UnitAbstract.tscn" id="1_pu6mb"]
+[ext_resource type="Texture2D" uid="uid://cwnixv88uwk86" path="res://art/placeholder units/sprite_6.png" id="2_2tn2p"]
+
+[sub_resource type="CircleShape2D" id="CircleShape2D_k0sax"]
+radius = 17.0294
+
+[sub_resource type="SpriteFrames" id="SpriteFrames_nw6ne"]
+animations = [{
+"frames": [{
+"duration": 1.0,
+"texture": ExtResource("2_2tn2p")
+}],
+"loop": true,
+"name": &"base",
+"speed": 5.0
+}]
+
+[node name="EnemyMage" type="Area2D"]
+script = ExtResource("1_8h4m5")
+
+[node name="Unit" parent="." instance=ExtResource("1_pu6mb")]
+
+[node name="CollisionShape2D" type="CollisionShape2D" parent="."]
+shape = SubResource("CircleShape2D_k0sax")
+
+[node name="AnimatedSprite2D" type="AnimatedSprite2D" parent="."]
+sprite_frames = SubResource("SpriteFrames_nw6ne")
+animation = &"base"
